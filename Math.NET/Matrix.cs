@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Globalization;
@@ -281,6 +284,17 @@ namespace MathDotNET.LinearAlgebra
                 }
                 return sqrt(norm);
             }
+        }
+
+        public ReadOnlyCollection<ReadOnlyCollection<T>> GetReadOnlyValuesCollection()
+        {
+            List<ReadOnlyCollection<T>> ROList = new List<ReadOnlyCollection<T>>();
+
+            for(int i = 0; i < M; i++)
+            {
+                ROList.Add(Array.AsReadOnly(values[i]));
+            }
+            return Array.AsReadOnly(ROList.ToArray());
         }
         public override string ToString()
         {
