@@ -36,18 +36,25 @@ namespace MathDotNET.LinearAlgebra
         {
             get { return numColumns; }
         }
+        /// <summary>
+        /// Copies the reference of a 2d array
+        /// </summary>
+        /// <param name="values">Pass by reference</param>
         public Matrix(T[][] values)
         {
-            this.values = new T[values.Length][];
+            this.values = values;//new T[values.Length][];
             numRows = values.Length;
             numColumns = values[0].Length;
-            for(int i = 0; i < values.Length; i++)
-            {
-                this.values[i] = new T[numColumns];
-                Array.Copy(values[i], this.values[i], values[i].Length);
-            }
+            //for(int i = 0; i < values.Length; i++)
+            //{
+            //    this.values[i] = new T[numColumns];
+            //    Array.Copy(values[i], this.values[i], values[i].Length);
+            //}
         }
-
+        /// <summary>
+        /// Deep copies a matrix object
+        /// </summary>
+        /// <param name="toCopy"></param>
         public Matrix(Matrix<T> toCopy)
         {
             this.values = new T[toCopy.values.Length][];

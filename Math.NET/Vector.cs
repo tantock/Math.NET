@@ -19,12 +19,15 @@ namespace MathDotNET.LinearAlgebra
         protected abstract T sqrt(T a);
 
         protected abstract T GetZeroValue();
-
+        /// <summary>
+        /// Copies the reference of an array
+        /// </summary>
+        /// <param name="values">Pass by reference</param>
         public Vector(T[] values)
         {
-            this.values = new T[values.Length];
+            this.values = values;//new T[values.Length];
             numEntries = values.Length;
-            Array.Copy(values, this.values, values.Length);
+            //Array.Copy(values, this.values, values.Length);
         }
         /// <summary>
         /// Copy constructor
