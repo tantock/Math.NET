@@ -23,7 +23,6 @@ namespace MathDotNET.LinearAlgebra.Tests
                 }
             }
         }
-
         [TestMethod()]
         public void FloatMatrixTestCopyConstructor()
         {
@@ -67,6 +66,20 @@ namespace MathDotNET.LinearAlgebra.Tests
             Assert.AreEqual(Atransform, A.T);
             //Matrix norm
             Assert.AreEqual((float)System.Math.Sqrt(91), A.Norm);
+        }
+        [TestMethod()]
+        public void FloatMatrixTestReadOnlyCollectionGet()
+        {
+            var dataA = new float[][] { new float[] { 1, 2, 3 }, new float[] { 4, 5, 6 } };
+            var A = new FloatMatrix(dataA);
+            var ROCollection = A.GetReadOnlyValuesCollection();
+            for(int i = 0; i < A.M; i++)
+            {
+                for(int j = 0; j < A.N; j++)
+                {
+                    Assert.AreEqual(ROCollection[i][j], dataA[i][j]);
+                }
+            }
         }
     }
 }

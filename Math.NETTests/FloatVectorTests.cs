@@ -30,7 +30,6 @@ namespace MathDotNET.LinearAlgebra.Tests
             A.Set(0, -A.Get(0)); //check that mutation doesn't leak into copied class
             Assert.AreNotEqual(A, B);
         }
-
         [TestMethod()]
         public void FloatVectorTestMathOperators()
         {
@@ -65,6 +64,17 @@ namespace MathDotNET.LinearAlgebra.Tests
             FloatMatrix M = new FloatMatrix(new float[][] { new float[] { 2, 0, 0 }, new float[] { 0, 2, 0 }, new float[] { 0, 0, 2 } });
             Assert.AreEqual(ATimes2, M * A);
             Assert.AreEqual(ATimes2, A * M);
+        }
+        [TestMethod()]
+        public void FloatVectorTestReadOnlyCollectionGet()
+        {
+            var dataA = new float[] { 1, 2, 3 };
+            var A = new FloatVector(dataA);
+            var ROCollection = A.GetReadOnlyValuesCollection();
+            for (int i = 0; i < A.Size; i++)
+            {
+                Assert.AreEqual(ROCollection[i], dataA[i]);
+            }
         }
     }
 }
