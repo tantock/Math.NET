@@ -288,13 +288,13 @@ namespace MathDotNET.LinearAlgebra
 
         public ReadOnlyCollection<ReadOnlyCollection<T>> GetReadOnlyValuesCollection()
         {
-            List<ReadOnlyCollection<T>> ROList = new List<ReadOnlyCollection<T>>();
+            ReadOnlyCollection<T>[] ROArray = new ReadOnlyCollection<T>[M];
 
             for(int i = 0; i < M; i++)
             {
-                ROList.Add(Array.AsReadOnly(values[i]));
+                ROArray[i] = Array.AsReadOnly(values[i]);
             }
-            return Array.AsReadOnly(ROList.ToArray());
+            return Array.AsReadOnly(ROArray);
         }
         public override string ToString()
         {
