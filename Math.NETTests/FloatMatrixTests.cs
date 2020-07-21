@@ -44,7 +44,7 @@ namespace MathDotNET.LinearAlgebra.Tests
             var B = new FloatMatrix(new float[][] { new float[] { 1, 2, 3 }, new float[] { 4, 5, 6 } });
             var C = new FloatMatrix(new float[][] { new float[] { 10, 20, 30 }, new float[] { 40, 50, 60 }, new float[] { 70, 80, 90 } });
             var ATimesC = new FloatMatrix(new float[][] { new float[] { 300, 360, 420 }, new float[] { 660, 810, 960 } });
-            var Atransform = new FloatMatrix(new float[][] { new float[] { 1, 4 }, new float[] { 2, 5 }, new float[] { 3, 6 } });
+            var Atranspose = new FloatMatrix(new float[][] { new float[] { 1, 4 }, new float[] { 2, 5 }, new float[] { 3, 6 } });
 
             //addition
             Assert.AreEqual(ATimes2, A + B);
@@ -63,9 +63,40 @@ namespace MathDotNET.LinearAlgebra.Tests
             //Matrix multiplication
             Assert.AreEqual(ATimesC, A * C);
             //Matrix transpose
-            Assert.AreEqual(Atransform, A.T);
+            Assert.AreEqual(Atranspose, A.T);
             //Matrix norm
             Assert.AreEqual((float)System.Math.Sqrt(91), A.Norm);
+        }
+
+        [TestMethod()]
+        public void FloatMatrixTestTransposeMathOperators()
+        {
+            var minusA = new FloatMatrix(new float[][] { new float[] { -1, -2, -3 }, new float[] { -4, -5, -6 } });
+            var ATimes2 = new FloatMatrix(new float[][] { new float[] { 2, 4, 6 }, new float[] { 8, 10, 12 } });
+            var A0 = new FloatMatrix(new float[][] { new float[] { 0, 0, 0 }, new float[] { 0, 0, 0 } });
+            var B = new FloatMatrix(new float[][] { new float[] { 1, 2, 3 }, new float[] { 4, 5, 6 } });
+            var C = new FloatMatrix(new float[][] { new float[] { 10, 20, 30 }, new float[] { 40, 50, 60 }, new float[] { 70, 80, 90 } });
+            var ATimesC = new FloatMatrix(new float[][] { new float[] { 300, 360, 420 }, new float[] { 660, 810, 960 } });
+            var Atranspose = new FloatMatrix(new float[][] { new float[] { 1, 4 }, new float[] { 2, 5 }, new float[] { 3, 6 } });
+
+            //addition
+            Assert.AreEqual(ATimes2, Atranspose.T + B);
+            //subtraction
+            Assert.AreEqual(A0, Atranspose.T - B);
+            //scalar multiplication
+            Assert.AreEqual(ATimes2, 2 * Atranspose.T);
+            //scalar multiplication
+            Assert.AreEqual(ATimes2, Atranspose.T * 2);
+            //negate
+            Assert.AreEqual(minusA, -Atranspose.T);
+            //Scalar division
+            Assert.AreEqual(Atranspose.T, ATimes2 / 2);
+            //Element-wise multiplication
+            Assert.AreEqual(A0, Atranspose.T & A0);
+            //Matrix multiplication
+            Assert.AreEqual(ATimesC, Atranspose.T * C);
+            //Matrix norm
+            Assert.AreEqual((float)System.Math.Sqrt(91), Atranspose.T.Norm);
         }
         [TestMethod()]
         public void FloatMatrixTestReadOnlyCollectionGet()
