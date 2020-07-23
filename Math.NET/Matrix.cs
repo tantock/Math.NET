@@ -13,22 +13,25 @@ namespace MathDotNET.LinearAlgebra
     /// <summary>
     /// M by N matrix of type U
     /// </summary>
-    /// <typeparam name="U"></typeparam>
+    /// <typeparam name="U">datatype</typeparam>
     public class Matrix<U>
     {
         private U[][] values;
-
         
         readonly int numRows;
         readonly int numColumns;
 
         private static IMathOperators<U> operators;
-
+        /// <summary>
+        /// Number of rows
+        /// </summary>
         public int M
         {
             get { return numRows; }
         }
-
+        /// <summary>
+        /// Number of columns
+        /// </summary>
         public int N
         {
             get { return numColumns; }
@@ -86,13 +89,17 @@ namespace MathDotNET.LinearAlgebra
                 Array.Copy(toCopy.values[i], this.values[i], toCopy.values[i].Length);
             }
         }
-
-        public Matrix(int numRows, int numColumns)
+        /// <summary>
+        /// Creates a matrix object of size M by N
+        /// </summary>
+        /// <param name="M">Number of rows</param>
+        /// <param name="N">Number of columns</param>
+        public Matrix(int M, int N)
         {
             setOperators();
-            this.numRows = numRows;
-            this.numColumns = numColumns;
-            this.values = new U[numRows][];
+            numRows = M;
+            numColumns = N;
+            values = new U[numRows][];
             for (int i = 0; i < numRows; i++)
             {
                 this.values[i] = new U[numColumns];
@@ -102,6 +109,11 @@ namespace MathDotNET.LinearAlgebra
                 }
             }
         }
+        /// <summary>
+        /// Converts a Vector to a Matrix object
+        /// </summary>
+        /// <param name="toCast"></param>
+        /// <param name="isColumnVector">Determines if the vector object should be represented as a column or row vector</param>
         public Matrix(Vector<U> toCast, bool isColumnVector) : this(isColumnVector ? toCast.Size : 1, isColumnVector? 1 : toCast.Size)
         {
             if (isColumnVector)
@@ -120,17 +132,29 @@ namespace MathDotNET.LinearAlgebra
             }
             setOperators();
         }
-
+        /// <summary>
+        /// Gets the i-th and j-th value of the matrix
+        /// </summary>
+        /// <param name="i">Number of rows down</param>
+        /// <param name="j">Number of columns across</param>
+        /// <returns></returns>
         public U Get(int i, int j)
         {
             return values[i][j];
         }
-
+        /// <summary>
+        /// Sets the i-th and j-th value of the matrix
+        /// </summary>
+        /// <param name="i">Number of rows down</param>
+        /// <param name="j">Number of columns across</param>
+        /// <param name="value"></param>
         public void Set(int i, int j, U value)
         {
             values[i][j] = value;
         }
-
+        /// <summary>
+        /// Transposes a matrix
+        /// </summary>
         public Matrix<U> T
         {
             get
@@ -157,6 +181,12 @@ namespace MathDotNET.LinearAlgebra
         }
 
         #region Matrix operators
+        /// <summary>
+        /// Matrix addition
+        /// </summary>
+        /// <param name="L">Left matrix</param>
+        /// <param name="R">Right matrix</param>
+        /// <returns>new Matrix(L+R)</returns>
         public static Matrix<U> operator +(Matrix<U> L, Matrix<U> R)
         {
             int m = L.numRows;
@@ -186,6 +216,12 @@ namespace MathDotNET.LinearAlgebra
                 return new Matrix<U>(result);
             }
         }
+        /// <summary>
+        /// Matrix subtraction
+        /// </summary>
+        /// <param name="L">Left matrix</param>
+        /// <param name="R">Right matrix</param>
+        /// <returns>new Matrix(L-R)</returns>
         public static Matrix<U> operator -(Matrix<U> L, Matrix<U> R)
         {
             int m = L.numRows;
@@ -215,6 +251,11 @@ namespace MathDotNET.LinearAlgebra
                 return new Matrix<U>(result);
             }
         }
+        /// <summary>
+        /// Matrix negation
+        /// </summary>
+        /// <param name="R">Right matrix</param>
+        /// <returns>new Matrix(-R)</returns>
         public static Matrix<U> operator -(Matrix<U> R)
         {
             int m = R.numRows;
@@ -234,6 +275,12 @@ namespace MathDotNET.LinearAlgebra
             }
             return new Matrix<U>(result);
         }
+        /// <summary>
+        /// Matrix multiplication
+        /// </summary>
+        /// <param name="L">Left matrix</param>
+        /// <param name="R">Right matrix</param>
+        /// <returns>new Matrix(L*R)</returns>
         public static Matrix<U> operator *(Matrix<U> L, Matrix<U> R)
         {
             int m = L.M;
@@ -267,6 +314,12 @@ namespace MathDotNET.LinearAlgebra
                 return new Matrix<U>(result);
             }
         }
+        /// <summary>
+        /// Matrix element-wise multiplication
+        /// </summary>
+        /// <param name="L">Left matrix</param>
+        /// <param name="R">Right matrix</param>
+        /// <returns>new Matrix(L&amp;R)</returns>
         public static Matrix<U> operator &(Matrix<U> L, Matrix<U> R)
         {
             int m = L.numRows;
@@ -295,6 +348,12 @@ namespace MathDotNET.LinearAlgebra
                 return new Matrix<U>(result);
             }
         }
+        /// <summary>
+        /// Matrix scalar multiplication
+        /// </summary>
+        /// <param name="k">Scalar multiple</param>
+        /// <param name="R">Right matrix</param>
+        /// <returns>new Matrix(k*R)</returns>
         public static Matrix<U> operator *(U k, Matrix<U> R)
         {
             int m = R.numRows;
@@ -314,10 +373,22 @@ namespace MathDotNET.LinearAlgebra
             }
             return new Matrix<U>(result);
         }
+        /// <summary>
+        /// Matrix scalar multiplication
+        /// </summary>
+        /// <param name="L">Left matrix</param>
+        /// <param name="k">Scalar multiple</param>
+        /// <returns>new Matrix(L*k)</returns>
         public static Matrix<U> operator *(Matrix<U> L, U k)
         {
             return k * L;
         }
+        /// <summary>
+        /// Matrix scalar division
+        /// </summary>
+        /// <param name="L">Left matrix</param>
+        /// <param name="k">Scalar divisor</param>
+        /// <returns>new Matrix(L/k)</returns>
         public static Matrix<U> operator /(Matrix<U> L, U k)
         {
             int m = L.numRows;
@@ -358,7 +429,10 @@ namespace MathDotNET.LinearAlgebra
                 return operators.sqrt(norm);
             }
         }
-
+        /// <summary>
+        /// Matrix values
+        /// </summary>
+        /// <returns>A A read-only collection</returns>
         public ReadOnlyCollection<ReadOnlyCollection<U>> GetReadOnlyValuesCollection()
         {
             ReadOnlyCollection<U>[] ROArray = new ReadOnlyCollection<U>[M];
@@ -369,6 +443,10 @@ namespace MathDotNET.LinearAlgebra
             }
             return Array.AsReadOnly(ROArray);
         }
+        /// <summary>
+        /// String representation of the matrix object
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             //string val = string.Join(",", values[0]);
@@ -380,7 +458,11 @@ namespace MathDotNET.LinearAlgebra
             }
             return sb.ToString();
         }
-
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns>true if the specified object is equal to the current object; otherwise, false</returns>
         public override bool Equals(object obj)
         {
             var item = obj as Matrix<U>;
@@ -401,7 +483,10 @@ namespace MathDotNET.LinearAlgebra
                 return isEqual;
             }
         }
-
+        /// <summary>
+        /// Serves as the default hash function
+        /// </summary>
+        /// <returns>A hash code for the current object</returns>
         public override int GetHashCode()
         {
             return values.GetHashCode();

@@ -1,0 +1,309 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MathDotNET</name>
+    </assembly>
+    <members>
+        <member name="T:MathDotNET.LinearAlgebra.Matrix`1">
+            <summary>
+            M by N matrix of type U
+            </summary>
+            <typeparam name="U">type</typeparam>
+        </member>
+        <member name="P:MathDotNET.LinearAlgebra.Matrix`1.M">
+            <summary>
+            Number of rows
+            </summary>
+        </member>
+        <member name="P:MathDotNET.LinearAlgebra.Matrix`1.N">
+            <summary>
+            Number of columns
+            </summary>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.#ctor(`0[][])">
+            <summary>
+            Copies the reference of a 2d array
+            </summary>
+            <param name="values">Pass by reference</param>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.#ctor(MathDotNET.LinearAlgebra.Matrix{`0})">
+            <summary>
+            Deep copies a matrix object
+            </summary>
+            <param name="toCopy"></param>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a matrix object of size M by N
+            </summary>
+            <param name="M">Number of rows</param>
+            <param name="N">Number of columns</param>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.#ctor(MathDotNET.LinearAlgebra.Vector{`0},System.Boolean)">
+            <summary>
+            Converts a Vector to a Matrix object
+            </summary>
+            <param name="toCast"></param>
+            <param name="isColumnVector">Determines if the vector object should be represented as a column or row vector</param>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.Get(System.Int32,System.Int32)">
+            <summary>
+            Gets the i-th and j-th value of the matrix
+            </summary>
+            <param name="i">Number of rows down</param>
+            <param name="j">Number of columns across</param>
+            <returns></returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.Set(System.Int32,System.Int32,`0)">
+            <summary>
+            Sets the i-th and j-th value of the matrix
+            </summary>
+            <param name="i">Number of rows down</param>
+            <param name="j">Number of columns across</param>
+            <param name="value"></param>
+        </member>
+        <member name="P:MathDotNET.LinearAlgebra.Matrix`1.T">
+            <summary>
+            Transposes a matrix
+            </summary>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.op_Addition(MathDotNET.LinearAlgebra.Matrix{`0},MathDotNET.LinearAlgebra.Matrix{`0})">
+            <summary>
+            Matrix addition
+            </summary>
+            <param name="L">Left matrix</param>
+            <param name="R">Right matrix</param>
+            <returns>new Matrix(L+R)</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.op_Subtraction(MathDotNET.LinearAlgebra.Matrix{`0},MathDotNET.LinearAlgebra.Matrix{`0})">
+            <summary>
+            Matrix subtraction
+            </summary>
+            <param name="L">Left matrix</param>
+            <param name="R">Right matrix</param>
+            <returns>new Matrix(L-R)</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.op_UnaryNegation(MathDotNET.LinearAlgebra.Matrix{`0})">
+            <summary>
+            Matrix negation
+            </summary>
+            <param name="R">Right matrix</param>
+            <returns>new Matrix(-R)</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.op_Multiply(MathDotNET.LinearAlgebra.Matrix{`0},MathDotNET.LinearAlgebra.Matrix{`0})">
+            <summary>
+            Matrix multiplication
+            </summary>
+            <param name="L">Left matrix</param>
+            <param name="R">Right matrix</param>
+            <returns>new Matrix(L*R)</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:MathDotNET.LinearAlgebra.Matrix`1.op_BitwiseAnd(MathDotNET.LinearAlgebra.Matrix{`0},MathDotNET.LinearAlgebra.Matrix{`0})" -->
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.op_Multiply(`0,MathDotNET.LinearAlgebra.Matrix{`0})">
+            <summary>
+            Matrix scalar multiplication
+            </summary>
+            <param name="k">Scalar multiple</param>
+            <param name="R">Right matrix</param>
+            <returns>new Matrix(k*R)</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.op_Multiply(MathDotNET.LinearAlgebra.Matrix{`0},`0)">
+            <summary>
+            Matrix scalar multiplication
+            </summary>
+            <param name="L">Left matrix</param>
+            <param name="k">Scalar multiple</param>
+            <returns>new Matrix(L*k)</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.op_Division(MathDotNET.LinearAlgebra.Matrix{`0},`0)">
+            <summary>
+            Matrix scalar division
+            </summary>
+            <param name="L">Left matrix</param>
+            <param name="k">Scalar divisor</param>
+            <returns>new Matrix(L/k)</returns>
+        </member>
+        <member name="P:MathDotNET.LinearAlgebra.Matrix`1.Norm">
+            <summary>
+            Returns the Frobenius norm of the matrix
+            </summary>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.GetReadOnlyValuesCollection">
+            <summary>
+            Matrix values
+            </summary>
+            <returns>A A read-only collection</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.ToString">
+            <summary>
+            String representation of the matrix object
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to the current object
+            </summary>
+            <param name="obj"></param>
+            <returns>true if the specified object is equal to the current object; otherwise, false</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.GetHashCode">
+            <summary>
+            Serves as the default hash function
+            </summary>
+            <returns>A hash code for the current object</returns>
+        </member>
+        <member name="T:MathDotNET.LinearAlgebra.Vector`1">
+            <summary>
+            N vector object of type T
+            </summary>
+            <typeparam name="T">type</typeparam>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.#ctor(System.Int32)">
+            <summary>
+            Creates a vector object of size N
+            </summary>
+            <param name="N">Number of elements in the vector</param>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.#ctor(`0[])">
+            <summary>
+            Copies the reference of an array
+            </summary>
+            <param name="values">Pass by reference</param>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.#ctor(MathDotNET.LinearAlgebra.Vector{`0})">
+            <summary>
+            Deep copies a vector object
+            </summary>
+            <param name="toCopy"></param>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.#ctor(MathDotNET.LinearAlgebra.Matrix{`0})">
+            <summary>
+            Converts a Matrix to a Vector object
+            </summary>
+            <param name="toCast"></param>
+            <exception cref="T:System.InvalidCastException">Thrown when the matrix is not 1 dimensional</exception>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.Get(System.Int32)">
+            <summary>
+            Gets the i-th value of the vector
+            </summary>
+            <param name="i"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.Set(System.Int32,`0)">
+            <summary>
+            Sets the i-th value of the vector
+            </summary>
+            <param name="i"></param>
+            <param name="value">Sets as this value</param>
+        </member>
+        <member name="P:MathDotNET.LinearAlgebra.Vector`1.Size">
+            <summary>
+            Returns the number of elements contained withing the vector
+            </summary>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.op_Addition(MathDotNET.LinearAlgebra.Vector{`0},MathDotNET.LinearAlgebra.Vector{`0})">
+            <summary>
+            Vector addition
+            </summary>
+            <param name="L">Left vector</param>
+            <param name="R">Right vector</param>
+            <returns>new Vector(L+R)</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.op_Subtraction(MathDotNET.LinearAlgebra.Vector{`0},MathDotNET.LinearAlgebra.Vector{`0})">
+            <summary>
+            Vector subtraction
+            </summary>
+            <param name="L">Left vector</param>
+            <param name="R">Right vector</param>
+            <returns>new Vector(L-R)</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.op_UnaryNegation(MathDotNET.LinearAlgebra.Vector{`0})">
+            <summary>
+            Vector negation
+            </summary>
+            <param name="R">Right vector</param>
+            <returns>new Vector(-R)</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.op_Multiply(MathDotNET.LinearAlgebra.Vector{`0},MathDotNET.LinearAlgebra.Vector{`0})">
+            <summary>
+            Vector multiplication
+            </summary>
+            <param name="L">Left matrix</param>
+            <param name="R">Right matrix</param>
+            <returns>scalar(L*R)</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:MathDotNET.LinearAlgebra.Vector`1.op_BitwiseAnd(MathDotNET.LinearAlgebra.Vector{`0},MathDotNET.LinearAlgebra.Vector{`0})" -->
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.op_Multiply(`0,MathDotNET.LinearAlgebra.Vector{`0})">
+            <summary>
+            Vector scalar multiplication
+            </summary>
+            <param name="k">Scalar multiple</param>
+            <param name="R">Right vector</param>
+            <returns>new Vector(k*R)</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.op_Multiply(MathDotNET.LinearAlgebra.Vector{`0},`0)">
+            <summary>
+            Vector scalar multiplication
+            </summary>
+            <param name="L">Left vector</param>
+            <param name="k">Scalar multiple</param>
+            <returns>new Vector(L*k)</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.op_Division(MathDotNET.LinearAlgebra.Vector{`0},`0)">
+            <summary>
+            Vector scalar division
+            </summary>
+            <param name="L">Left vector</param>
+            <param name="k">Scalar multiple</param>
+            <returns>new Vector(L/k)</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.op_Multiply(MathDotNET.LinearAlgebra.Matrix{`0},MathDotNET.LinearAlgebra.Vector{`0})">
+            <summary>
+            Matrix-vector multiplication
+            </summary>
+            <param name="A">Matrix</param>
+            <param name="v">Vector</param>
+            <returns>new Vector(A*v)</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.op_Multiply(MathDotNET.LinearAlgebra.Vector{`0},MathDotNET.LinearAlgebra.Matrix{`0})">
+            <summary>
+            Matrix-vector multiplication
+            </summary>
+            <param name="v">Vector</param>
+            <param name="A">Matrix</param>
+            <returns>new Vector(v*A)</returns>
+        </member>
+        <member name="P:MathDotNET.LinearAlgebra.Vector`1.EuclidLength">
+            <summary>
+            Returns the Euclidean length of the vector
+            </summary>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.GetReadOnlyValuesCollection">
+            <summary>
+            Vector values
+            </summary>
+            <returns>A read only collection</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.ToString">
+            <summary>
+            String representation of the vector object
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to the current object
+            </summary>
+            <param name="obj"></param>
+            <returns>true if the specified object is equal to the current object; otherwise, false</returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.GetHashCode">
+            <summary>
+            Serves as the default hash function
+            </summary>
+            <returns>A hash code for the current object</returns>
+        </member>
+    </members>
+</doc>
