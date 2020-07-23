@@ -38,6 +38,7 @@ namespace MathDotNET.LinearAlgebra
         {
             numEntries = Size;
             T[] values = new T[Size];
+            setOperators();
             for(int i = 0; i < numEntries; i++)
             {
                 values[i] = operators.GetZeroValue();

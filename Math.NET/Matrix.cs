@@ -60,10 +60,10 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="values">Pass by reference</param>
         public Matrix(U[][] values)
         {
+            setOperators();
             this.values = values;//new U[values.Length][];
             numRows = values.Length;
             numColumns = values[0].Length;
-            setOperators();
             //for(int i = 0; i < values.Length; i++)
             //{
             //    this.values[i] = new U[numColumns];
@@ -76,6 +76,7 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="toCopy"></param>
         public Matrix(Matrix<U> toCopy)
         {
+            setOperators();
             this.values = new U[toCopy.numRows][];
             numRows = toCopy.numRows;
             numColumns = toCopy.numColumns;
@@ -84,11 +85,11 @@ namespace MathDotNET.LinearAlgebra
                 this.values[i] = new U[numColumns];
                 Array.Copy(toCopy.values[i], this.values[i], toCopy.values[i].Length);
             }
-            setOperators();
         }
 
         public Matrix(int numRows, int numColumns)
         {
+            setOperators();
             this.numRows = numRows;
             this.numColumns = numColumns;
             this.values = new U[numRows][];
@@ -100,7 +101,6 @@ namespace MathDotNET.LinearAlgebra
                     this.values[i][j] = operators.GetZeroValue();
                 }
             }
-            setOperators();
         }
         public Matrix(Vector<U> toCast, bool isColumnVector) : this(isColumnVector ? toCast.Size : 1, isColumnVector? 1 : toCast.Size)
         {
