@@ -95,6 +95,10 @@ namespace MathDotNET.LinearAlgebra
             for (int i = 0; i < numRows; i++)
             {
                 this.values[i] = new U[numColumns];
+                for(int j = 0; j < numColumns; j++)
+                {
+                    this.values[i][j] = operators.GetZeroValue();
+                }
             }
             setOperators();
         }

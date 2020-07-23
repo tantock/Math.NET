@@ -11,7 +11,6 @@ namespace MathDotNET.LinearAlgebra
     {
         private T[] values;
 
-
         readonly int numEntries;
 
         private static IMathOperators<T> operators;
@@ -33,6 +32,15 @@ namespace MathDotNET.LinearAlgebra
                 {
                     throw new NotImplementedException("Datatype unknown for math operators");
                 }
+            }
+        }
+        public Vector(int Size)
+        {
+            numEntries = Size;
+            T[] values = new T[Size];
+            for(int i = 0; i < numEntries; i++)
+            {
+                values[i] = operators.GetZeroValue();
             }
         }
         /// <summary>
