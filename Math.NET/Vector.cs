@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MathDotNET.MathOperators;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -6,19 +7,34 @@ using System.Text;
 
 namespace MathDotNET.LinearAlgebra
 {
-    public abstract class Vector<T>
+    public class Vector<T>
     {
         private T[] values;
 
 
         readonly int numEntries;
 
-        protected abstract T add(T a, T b);
-        protected abstract T subtract(T a, T b);
-        protected abstract T multiply(T a, T b);
-        protected abstract T sqrt(T a);
+        private static IMathOperators<T> operators;
 
-        protected abstract T GetZeroValue();
+        private void setOperators()
+        {
+            if (operators == null)
+            {
+                Type datatype = typeof(T);
+                if (datatype == typeof(double))
+                {
+                    operators = (IMathOperators<T>)new DoubleOperators();
+                }
+                else if (datatype == typeof(float))
+                {
+                    operators = (IMathOperators<T>)new FloatOperators();
+                }
+                else
+                {
+                    throw new NotImplementedException("Datatype unknown for math operators");
+                }
+            }
+        }
         /// <summary>
         /// Copies the reference of an array
         /// </summary>
@@ -27,6 +43,7 @@ namespace MathDotNET.LinearAlgebra
         {
             this.values = values;//new T[values.Length];
             numEntries = values.Length;
+            setOperators();
             //Array.Copy(values, this.values, values.Length);
         }
         /// <summary>
@@ -38,6 +55,7 @@ namespace MathDotNET.LinearAlgebra
             this.values = new T[toCopy.values.Length];
             this.numEntries = toCopy.numEntries;
             Array.Copy(toCopy.values, this.values, toCopy.values.Length);
+            setOperators();
         }
 
         public Vector(Matrix<T> toCast)
@@ -60,6 +78,7 @@ namespace MathDotNET.LinearAlgebra
                     }
                 }
             }
+            setOperators();
         }
 
         public T Get(int i)
@@ -81,27 +100,26 @@ namespace MathDotNET.LinearAlgebra
         }
 
         #region Vector operators
-        internal T[] vectorAdd(Vector<T> B)
+        public static Vector<T> operator +(Vector<T> L, Vector<T> R)
         {
-            T[] result = new T[this.numEntries];
-            if (B.numEntries != this.numEntries)
+            T[] result = new T[L.numEntries];
+            if (R.numEntries != L.numEntries)
             {
                 throw new InvalidOperationException("Invalid dimensions for vector addition");
             }
             else
             {
-                for(int i = 0; i < result.Length; i++)
+                for (int i = 0; i < result.Length; i++)
                 {
-                    result[i] = add(this.values[i], B.values[i]);
+                    result[i] = operators.add(L.values[i], R.values[i]);
                 }
-                return result;
+                return new Vector<T>(result);
             }
         }
-
-        internal T[] vectorSubtract(Vector<T> B)
+        public static Vector<T> operator -(Vector<T> L, Vector<T> R)
         {
-            T[] result = new T[this.numEntries];
-            if (B.numEntries != this.numEntries)
+            T[] result = new T[L.numEntries];
+            if (R.numEntries != L.numEntries)
             {
                 throw new InvalidOperationException("Invalid dimensions for vector subtraction");
             }
@@ -109,63 +127,95 @@ namespace MathDotNET.LinearAlgebra
             {
                 for (int i = 0; i < result.Length; i++)
                 {
-                    result[i] = subtract(this.values[i], B.values[i]);
+                    result[i] = operators.subtract(L.values[i], R.values[i]);
                 }
-                return result;
+                return new Vector<T>(result);
             }
         }
-
-        internal T vectorMultiply(Vector<T> B)
+        public static Vector<T> operator -(Vector<T> R)
+        {
+            T[] result = new T[R.numEntries];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = operators.subtract(operators.GetZeroValue(), R.values[i]);
+            }
+            return new Vector<T>(result);
+        }
+        public static T operator *(Vector<T> L, Vector<T> R)
         {
             T result;
-            if (B.numEntries != this.numEntries)
+            if (R.numEntries != L.numEntries)
             {
                 throw new InvalidOperationException("Invalid dimensions for vector multiplication");
             }
             else
             {
-                result = GetZeroValue();
-                for (int i = 0; i < B.numEntries; i++)
+                result = operators.GetZeroValue();
+                for (int i = 0; i < R.numEntries; i++)
                 {
-                    result = add(multiply(this.values[i],B.values[i]), result);
+                    result = operators.add(operators.multiply(L.values[i], R.values[i]), result);
                 }
                 return result;
             }
         }
-        internal T[] vectorScalarMultiply(T k)
+        public static Vector<T> operator &(Vector<T> L, Vector<T> R)
         {
-            T[] result = new T[this.numEntries];
+            T[] result = new T[L.numEntries];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = multiply(this.values[i], k);
+                result[i] = operators.multiply(L.values[i], R.values[i]);
             }
-            return result;
+            return new Vector<T>(result);
         }
-
-        internal T[] vectorElementWiseMultiply(Vector<T> B)
+        public static Vector<T> operator *(T k, Vector<T> R)
         {
-            T[] result = new T[this.numEntries];
+            T[] result = new T[R.numEntries];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = multiply(this.values[i], B.values[i]);
+                result[i] = operators.multiply(R.values[i], k);
             }
-            return result;
+            return new Vector<T>(result);
+        }
+        public static Vector<T> operator *(Vector<T> L, T k)
+        {
+            return k * L;
+        }
+        public static Vector<T> operator /(Vector<T> L, T k)
+        {
+            T[] result = new T[L.numEntries];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = operators.divide(L.values[i], k);
+            }
+            return new Vector<T>(result);
+        }
+        #endregion
+        #region Matrix-Vector operations
+        public static Vector<T> operator * (Matrix<T>A, Vector<T> v)
+        {
+            Matrix<T> vector = new Matrix<T>(v, true);
+            return new Vector<T>(A * vector);
+        }
+        public static Vector<T> operator *(Vector<T> v, Matrix<T> A)
+        {
+            Matrix<T> vector = new Matrix<T>(v, false);
+            return new Vector<T>(vector * A);
         }
         #endregion
         /// <summary>
         /// Returns the Euclidean length of the vector
         /// </summary>
-        public T Length
+        public T EuclidLength
         {
             get
             {
-                T norm = GetZeroValue();
+                T norm = operators.GetZeroValue();
                 for (int i = 0; i < Size; i++)
                 {
                     var value = Get(i);
-                    norm = add(norm, multiply(value, value));
+                    norm = operators.add(norm, operators.multiply(value, value));
                 }
-                return sqrt(norm);
+                return operators.sqrt(norm);
             }
         }
 
