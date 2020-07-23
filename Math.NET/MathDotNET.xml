@@ -4,11 +4,62 @@
         <name>MathDotNET</name>
     </assembly>
     <members>
+        <member name="T:MathDotNET.IMathOperators`1">
+            <summary>
+            An interface for math operator functions of type T
+            </summary>
+            <typeparam name="T">datatype</typeparam>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.add(`0,`0)">
+            <summary>
+            Addition operator
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns>a+b</returns>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.subtract(`0,`0)">
+            <summary>
+            Subtraction operator
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns>a-b</returns>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.multiply(`0,`0)">
+            <summary>
+            Multiplication operator
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns>a*b</returns>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.divide(`0,`0)">
+            <summary>
+            Division operator
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns>a/b</returns>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.sqrt(`0)">
+            <summary>
+            Square root operator
+            </summary>
+            <param name="a"></param>
+            <returns>Sqrt(a)</returns>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.GetZeroValue">
+            <summary>
+            Default zero operator
+            </summary>
+            <returns>The zero of the datatype T</returns>
+        </member>
         <member name="T:MathDotNET.LinearAlgebra.Matrix`1">
             <summary>
             M by N matrix of type U
             </summary>
-            <typeparam name="U">type</typeparam>
+            <typeparam name="U">datatype</typeparam>
         </member>
         <member name="P:MathDotNET.LinearAlgebra.Matrix`1.M">
             <summary>
@@ -98,7 +149,14 @@
             <param name="R">Right matrix</param>
             <returns>new Matrix(L*R)</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:MathDotNET.LinearAlgebra.Matrix`1.op_BitwiseAnd(MathDotNET.LinearAlgebra.Matrix{`0},MathDotNET.LinearAlgebra.Matrix{`0})" -->
+        <member name="M:MathDotNET.LinearAlgebra.Matrix`1.op_BitwiseAnd(MathDotNET.LinearAlgebra.Matrix{`0},MathDotNET.LinearAlgebra.Matrix{`0})">
+            <summary>
+            Matrix element-wise multiplication
+            </summary>
+            <param name="L">Left matrix</param>
+            <param name="R">Right matrix</param>
+            <returns>new Matrix(L&amp;R)</returns>
+        </member>
         <member name="M:MathDotNET.LinearAlgebra.Matrix`1.op_Multiply(`0,MathDotNET.LinearAlgebra.Matrix{`0})">
             <summary>
             Matrix scalar multiplication
@@ -157,7 +215,7 @@
             <summary>
             N vector object of type T
             </summary>
-            <typeparam name="T">type</typeparam>
+            <typeparam name="T">datatype</typeparam>
         </member>
         <member name="M:MathDotNET.LinearAlgebra.Vector`1.#ctor(System.Int32)">
             <summary>
@@ -234,7 +292,14 @@
             <param name="R">Right matrix</param>
             <returns>scalar(L*R)</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:MathDotNET.LinearAlgebra.Vector`1.op_BitwiseAnd(MathDotNET.LinearAlgebra.Vector{`0},MathDotNET.LinearAlgebra.Vector{`0})" -->
+        <member name="M:MathDotNET.LinearAlgebra.Vector`1.op_BitwiseAnd(MathDotNET.LinearAlgebra.Vector{`0},MathDotNET.LinearAlgebra.Vector{`0})">
+            <summary>
+            Vector element-wise multiplication
+            </summary>
+            <param name="L">Left vector</param>
+            <param name="R">Right vector</param>
+            <returns>new Vector(L&amp;R)</returns>
+        </member>
         <member name="M:MathDotNET.LinearAlgebra.Vector`1.op_Multiply(`0,MathDotNET.LinearAlgebra.Vector{`0})">
             <summary>
             Vector scalar multiplication

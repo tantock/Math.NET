@@ -50,6 +50,10 @@ namespace MathDotNET.LinearAlgebra
                 {
                     operators = (IMathOperators<U>)new FloatOperators();
                 }
+                else if(datatype == typeof(int))
+                {
+                    operators = (IMathOperators<U>)new IntOperators();
+                }
                 else
                 {
                     throw new NotImplementedException("Datatype unknown for math operators");
