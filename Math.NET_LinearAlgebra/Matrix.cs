@@ -1,11 +1,6 @@
 ﻿using MathDotNET.MathOperators;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Dynamic;
-using System.Globalization;
 using System.Text;
 
 namespace MathDotNET.LinearAlgebra

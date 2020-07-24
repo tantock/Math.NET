@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>MathDotNET</name>
+        <name>MathDotNET_LinearAlgebra</name>
     </assembly>
     <members>
         <member name="T:MathDotNET.IMathOperators`1">
