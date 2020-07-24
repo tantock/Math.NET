@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30309.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathDotNET", "Math.NET\MathDotNET.csproj", "{281933A4-2B3C-456B-8AE2-3E23ED8B478B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathDotNET.LinearAlgebra", "Math.NET\MathDotNET.LinearAlgebra.csproj", "{281933A4-2B3C-456B-8AE2-3E23ED8B478B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathDotNETTests", "Math.NETTests\MathDotNETTests.csproj", "{DEC8215E-9C84-430B-8A73-777266DA2F6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathDotNETTests", "Math.NETTests\MathDotNETTests.csproj", "{DEC8215E-9C84-430B-8A73-777266DA2F6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

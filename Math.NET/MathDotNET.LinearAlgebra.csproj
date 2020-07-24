@@ -7,10 +7,13 @@
     <AssemblyVersion>0.0.0.1</AssemblyVersion>
     <FileVersion>0.0.0.1</FileVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageId>MathNET.LinearAlgebra</PackageId>
+    <Authors>Gabriel Tan</Authors>
+    <Company />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\Users\Gabriel\Documents\Visual Studio 2019\Projects\Math.NET\Math.NET\MathDotNET.xml</DocumentationFile>
+    <DocumentationFile>C:\Users\Gabriel\Documents\Visual Studio 2019\Projects\Math.NET\Math.NET\MathNet_LinearAlgebra.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>

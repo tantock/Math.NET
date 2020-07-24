@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Math.NET\MathDotNET.csproj" />
+    <ProjectReference Include="..\Math.NET\MathDotNET.LinearAlgebra.csproj" />
   </ItemGroup>
 
 </Project>
