@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathDotNETTests", "Math.NET
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathDotNET.LinearAlgebra", "Math.NET_LinearAlgebra\MathDotNET.LinearAlgebra.csproj", "{D396FEAD-F85C-4BFD-8179-B79660F5E89F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathDotNet.Random", "Math.Net_Random\MathDotNet.Random.csproj", "{C1FF2902-AC06-44FB-A1D4-F3D8CF55091A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D396FEAD-F85C-4BFD-8179-B79660F5E89F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D396FEAD-F85C-4BFD-8179-B79660F5E89F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D396FEAD-F85C-4BFD-8179-B79660F5E89F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1FF2902-AC06-44FB-A1D4-F3D8CF55091A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1FF2902-AC06-44FB-A1D4-F3D8CF55091A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1FF2902-AC06-44FB-A1D4-F3D8CF55091A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1FF2902-AC06-44FB-A1D4-F3D8CF55091A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

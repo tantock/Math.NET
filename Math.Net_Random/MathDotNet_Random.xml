@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MathDotNet.Random</name>
+    </assembly>
+    <members>
+        <!-- Badly formed XML comment ignored for member "T:MathDotNet.Random.Extension" -->
+        <!-- Badly formed XML comment ignored for member "M:MathDotNet.Random.Extension.Gaussian(System.Random,System.Double,System.Double)" -->
+    </members>
+</doc>
