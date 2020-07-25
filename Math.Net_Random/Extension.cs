@@ -5,9 +5,9 @@ namespace MathDotNet.Random
     /// <summary>
     /// An extension to the random class object
     /// </summary>
-    /// <summary>
     public static class Extension
     {
+        /// <summary>
         /// Generates a random variable with a gaussian distribution probability.
         /// </summary>
         /// <param name="RndVar"></param>

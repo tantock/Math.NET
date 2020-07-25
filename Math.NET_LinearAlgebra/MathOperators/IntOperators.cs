@@ -16,6 +16,11 @@ namespace MathDotNET.MathOperators
             return a / b;
         }
 
+        public int GetOneValue()
+        {
+            return 1;
+        }
+
         public int GetZeroValue()
         {
             return 0;

@@ -55,6 +55,12 @@
             </summary>
             <returns>The zero of the datatype T</returns>
         </member>
+        <member name="M:MathDotNET.IMathOperators`1.GetOneValue">
+            <summary>
+            Default one operator
+            </summary>
+            <returns>The one of the datatype T</returns>
+        </member>
         <member name="T:MathDotNET.LinearAlgebra.Matrix`1">
             <summary>
             M by N matrix of type U
@@ -210,6 +216,28 @@
             Serves as the default hash function
             </summary>
             <returns>A hash code for the current object</returns>
+        </member>
+        <member name="T:MathDotNET.LinearAlgebra.MatrixBuilder`1">
+            <summary>
+            Common matrix builder
+            </summary>
+            <typeparam name="T">datatype</typeparam>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.MatrixBuilder`1.Identity(System.Int32)">
+            <summary>
+            Returns an identity matrix of dimension N by N
+            </summary>
+            <param name="N"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MathDotNET.LinearAlgebra.MatrixBuilder`1.All(`0,System.Int32,System.Int32)">
+            <summary>
+            Creates an M by N matrix with all elements as value
+            </summary>
+            <param name="value">Set as this value</param>
+            <param name="M">Number of rows</param>
+            <param name="N">Number of columns</param>
+            <returns></returns>
         </member>
         <member name="T:MathDotNET.LinearAlgebra.Vector`1">
             <summary>

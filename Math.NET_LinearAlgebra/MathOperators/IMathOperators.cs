@@ -49,6 +49,10 @@ namespace MathDotNET
         /// </summary>
         /// <returns>The zero of the datatype T</returns>
         T GetZeroValue();
-
+        /// <summary>
+        /// Default one operator
+        /// </summary>
+        /// <returns>The one of the datatype T</returns>
+        T GetOneValue();
     }
 }

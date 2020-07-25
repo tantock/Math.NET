@@ -113,5 +113,35 @@ namespace MathDotNET.LinearAlgebra.Tests
                 }
             }
         }
+        [TestMethod()]
+        public void FloatMatrixTestAllBuilder()
+        {
+            //All values
+            float[][] a_Data = new float[][] { new float[] { 1, 1, 1 }, new float[] { 1, 1, 1 } };
+            var A = new Matrix<float>(a_Data);
+            var B = MatrixBuilder<double>.All(1, 2, 3);
+            for (int i = 0; i < a_Data.Length; i++)
+            {
+                for (int j = 0; j < a_Data[0].Length; j++)
+                {
+                    Assert.AreEqual(A.Get(i, j),B.Get(i,j));
+                }
+            }
+        }
+        [TestMethod()]
+        public void FloatMatrixTestIdentityBuilder()
+        {
+            //Identity
+            float[][] I_Data = new float[][] { new float[] { 1, 0, 0 }, new float[] { 0, 1, 0 }, new float[] { 0, 0, 1 } };
+            var I = MatrixBuilder<float>.Identity(3);
+            for (int i = 0; i < I_Data.Length; i++)
+            {
+                for (int j = 0; j < I_Data[0].Length; j++)
+                {
+                    Assert.AreEqual(I_Data[i][j], I.Get(i, j));
+                }
+            }
+
+        }
     }
 }
