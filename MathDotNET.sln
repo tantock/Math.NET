@@ -10,6 +10,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathDotNet.Random", "Math.Net_Random\MathDotNet.Random.csproj", "{C1FF2902-AC06-44FB-A1D4-F3D8CF55091A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathDotNet.NumericalOptimizer", "Math.NET_NumericalOptimizer\MathDotNet.NumericalOptimizer.csproj", "{D3FE5071-5ED4-4956-9144-79631A97F8A8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D396FEAD-F85C-4BFD-8179-B79660F5E89F} = {D396FEAD-F85C-4BFD-8179-B79660F5E89F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

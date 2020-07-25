@@ -7,19 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="FloatVectorTests.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Math.NET_LinearAlgebra\MathDotNET.LinearAlgebra.csproj" />
-    <ProjectReference Include="..\Math.NET_NumericalOptimizer\MathDotNet.NumericalOptimizer.csproj" />
   </ItemGroup>
 
 </Project>

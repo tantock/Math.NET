@@ -4,7 +4,19 @@
         <name>MathDotNet.Random</name>
     </assembly>
     <members>
-        <!-- Badly formed XML comment ignored for member "T:MathDotNet.Random.Extension" -->
-        <!-- Badly formed XML comment ignored for member "M:MathDotNet.Random.Extension.Gaussian(System.Random,System.Double,System.Double)" -->
+        <member name="T:MathDotNet.Random.Extension">
+            <summary>
+            An extension to the random class object
+            </summary>
+        </member>
+        <member name="M:MathDotNet.Random.Extension.Gaussian(System.Random,System.Double,System.Double)">
+            <summary>
+            Generates a random variable with a gaussian distribution probability.
+            </summary>
+            <param name="RndVar"></param>
+            <param name="mean">Data mean value</param>
+            <param name="stdDev">Standard deviation of values</param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

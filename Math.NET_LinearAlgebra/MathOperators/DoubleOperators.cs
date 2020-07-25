@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MathDotNET.MathOperators
 {
-    class DoubleOperators : IMathOperators<double>
+    public class DoubleOperators : IMathOperators<double>
     {
         public double add(double a, double b)
         {

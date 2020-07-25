@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MathDotNET.MathOperators
 {
-    class FloatOperators : IMathOperators<float>
+    public class FloatOperators : IMathOperators<float>
     {
         public float add(float a, float b)
         {
