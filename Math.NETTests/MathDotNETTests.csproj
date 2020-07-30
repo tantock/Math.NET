@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Math.NET_LinearAlgebra\MathDotNET.LinearAlgebra.csproj" />
     <ProjectReference Include="..\Math.NET_NumericalOptimizer\MathDotNET.NumericalOptimizer.csproj" />
+    <ProjectReference Include="..\MathDotNET.Collections.Generic\MathDotNET.Collections.Generic.csproj" />
   </ItemGroup>
 
 </Project>
