@@ -46,6 +46,7 @@ namespace MathDotNET.LinearAlgebra.Tests
             var C = new Matrix<float>(new float[][] { new float[] { 10, 20, 30 }, new float[] { 40, 50, 60 }, new float[] { 70, 80, 90 } });
             var ATimesC = new Matrix<float>(new float[][] { new float[] { 300, 360, 420 }, new float[] { 660, 810, 960 } });
             var Atranspose = new Matrix<float>(new float[][] { new float[] { 1, 4 }, new float[] { 2, 5 }, new float[] { 3, 6 } });
+            var rowVec = new Matrix<float>(new float[][] { new float[] { 1, 2, 3 , 4, 5, 6 } });
 
             //addition
             Assert.AreEqual(ATimes2, A + B);
@@ -67,6 +68,8 @@ namespace MathDotNET.LinearAlgebra.Tests
             Assert.AreEqual(Atranspose, A.T);
             //Matrix norm
             Assert.AreEqual((float)System.Math.Sqrt(91), A.Norm);
+            //Matrix downcast
+            Assert.AreEqual(91f, rowVec * rowVec.T);
         }
 
         [TestMethod()]

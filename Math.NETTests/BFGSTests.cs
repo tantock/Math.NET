@@ -38,17 +38,21 @@ namespace MathDotNETTests.NumericalOptimizer
 
             var initialEstimate = new Vector<double>(new double[]{ 1, 4, -5 });
 
-            minimize.Minimize(initialEstimate);
+            var t = minimize.Minimize(initialEstimate, new System.Threading.CancellationTokenSource());
 
-            var expected = new Vector<double>(new double[] { -5, -5, -5 });
-
-            for(int i = 0; i < minimize.Solution.M; i++)
+            t.ContinueWith((antecedent) => 
             {
-                for(int j = 0; j < minimize.Solution.N; j++)
+                var expected = new Vector<double>(new double[] { -5, -5, -5 });
+
+                for (int i = 0; i < minimize.Solution.M; i++)
                 {
-                    Assert.AreEqual(expected.Get(i), minimize.Solution.Get(i,j), tollerance);
+                    for (int j = 0; j < minimize.Solution.N; j++)
+                    {
+                        Assert.AreEqual(expected.Get(i), minimize.Solution.Get(i, j), tollerance);
+                    }
                 }
-            }
+            });
+
         }
     }
 }

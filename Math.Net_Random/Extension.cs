@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MathDotNet.Random
+namespace MathDotNET.Random
 {
     /// <summary>
     /// An extension to the random class object

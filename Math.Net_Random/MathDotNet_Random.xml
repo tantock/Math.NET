@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>MathDotNet.Random</name>
+        <name>MathDotNET.Random</name>
     </assembly>
     <members>
-        <member name="T:MathDotNet.Random.Extension">
+        <member name="T:MathDotNET.Random.Extension">
             <summary>
             An extension to the random class object
             </summary>
         </member>
-        <member name="M:MathDotNet.Random.Extension.Gaussian(System.Random,System.Double,System.Double)">
+        <member name="M:MathDotNET.Random.Extension.Gaussian(System.Random,System.Double,System.Double)">
             <summary>
             Generates a random variable with a gaussian distribution probability.
             </summary>

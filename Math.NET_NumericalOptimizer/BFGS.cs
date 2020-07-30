@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using MathDotNET.LinearAlgebra;
 
 namespace MathDotNET.NumericalOptimizer
@@ -33,63 +35,77 @@ namespace MathDotNET.NumericalOptimizer
             callbackMethod = callback;
         }
 
-        public void Minimize(Vector<double> initialX)
+        public Task Minimize(Vector<double> initialX, CancellationTokenSource ctSource)
         {
-            numStepsToConverge = 0;
-            Matrix<double> X = new Matrix<double>(initialX, true);
-
-            Matrix<double> B_inv = MatrixBuilder<double>.Identity(initialX.Size);
-
-            Matrix<double> grad = new Matrix<double>(FuncGrad(initialX), true);
-
-            Matrix<double> gradNextX = new Matrix<double>(initialX.Size, 1);
-
-
-            double normGrad = grad.Norm;
-
-            double stepLength;
-
-            Matrix<double> s;
-
-            Matrix<double> y;
-
-            while (normGrad > GradientTolerance)
+            CancellationToken ct = ctSource.Token;
+            var task = Task.Run(() =>
             {
-                Matrix<double> p = (B_inv * -grad);
+                ct.ThrowIfCancellationRequested();
+                numStepsToConverge = 0;
+                Matrix<double> X = new Matrix<double>(initialX, true);
 
-                //Matrix<double> p_unit = p / p.EuclidNorm;
+                Matrix<double> B_inv = MatrixBuilder<double>.Identity(initialX.Size);
 
-                stepLength = backtrackingLineSearch(X, p, grad);
+                Matrix<double> grad = new Matrix<double>(FuncGrad(initialX), true);
 
-                s = stepLength * p;
-
-                X = X + s;
-
-                gradNextX = new Matrix<double>(FuncGrad(new Vector<double>(X)),true);
-
-                y = gradNextX - grad;
+                Matrix<double> gradNextX = new Matrix<double>(initialX.Size, 1);
 
 
+                double normGrad = grad.Norm;
 
-                double sT_y = (s.T * y).Get(0,0);
-                double yT_Binv_y = (y.T * B_inv * y).Get(0,0);
+                double stepLength;
 
-                Matrix<double> secondTerm = ((sT_y + yT_Binv_y) / (sT_y * sT_y)) * (s * s.T);
+                Matrix<double> s;
 
-                Matrix<double> thirdTerm = (B_inv * y * s.T + s * y.T * B_inv) / sT_y;
+                Matrix<double> y;
 
-                B_inv += (secondTerm - thirdTerm);
-
-                grad = gradNextX;
-                normGrad = grad.Norm;
-                if (callbackMethod != null)
+                while (normGrad > GradientTolerance)
                 {
-                    callbackMethod(new Vector<double>(X), normGrad);
-                }
-                numStepsToConverge++;
-            }
+                    Matrix<double> p = (B_inv * -grad);
 
-            solution = X;
+                    //Matrix<double> p_unit = p / p.EuclidNorm;
+
+                    stepLength = backtrackingLineSearch(X, p, grad);
+
+                    s = stepLength * p;
+
+                    X = X + s;
+
+                    gradNextX = new Matrix<double>(FuncGrad(new Vector<double>(X)), true);
+
+                    y = gradNextX - grad;
+
+
+
+                    double sT_y = s.T * y;
+                    double yT_Binv_y = y.T * B_inv * y;
+
+                    Matrix<double> secondTerm = ((sT_y + yT_Binv_y) / (sT_y * sT_y)) * (s * s.T);
+
+                    Matrix<double> thirdTerm = (B_inv * y * s.T + s * y.T * B_inv) / sT_y;
+
+                    B_inv += (secondTerm - thirdTerm);
+
+                    grad = gradNextX;
+                    normGrad = grad.Norm;
+                    if (callbackMethod != null)
+                    {
+                        callbackMethod(new Vector<double>(X), normGrad);
+                    }
+                    numStepsToConverge++;
+                    // Poll on this property if you have to do
+                    // other cleanup before throwing.
+                    if (ct.IsCancellationRequested)
+                    {
+                        // Clean up here, then...
+                        solution = X;
+                        ct.ThrowIfCancellationRequested();
+                    }
+                }
+                solution = X;
+            }, ctSource.Token);
+
+            return task;
         }
 
         //public void backtrackingGD(Vector<double> initialX)
@@ -125,8 +141,8 @@ namespace MathDotNET.NumericalOptimizer
 
             double f_of_nextX = FuncToMinimize(new Vector<double>(nextX));
             Matrix<double> gradF_of_nextX = new Matrix<double>(FuncGrad(new Vector<double>(nextX)),true);
-            double p_t_timesGradofX = (direction_k.T * gradF_of_x).Get(0,0);
-            double p_t_timesGradofnextX = (direction_k.T * gradF_of_nextX).Get(0,0);
+            double p_t_timesGradofX = direction_k.T * gradF_of_x;
+            double p_t_timesGradofnextX = direction_k.T * gradF_of_nextX;
 
             if (f_of_nextX <= f_of_x + c1Wolfe * stepLength_k * p_t_timesGradofX)
             {

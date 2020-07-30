@@ -2,6 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MathDotNET.LinearAlgebra
 {
@@ -298,7 +299,7 @@ namespace MathDotNET.LinearAlgebra
                 {
                     result[i] = new U[p];
                 }
-                for (int i = 0; i < m; i++)
+                Parallel.For(0, m, i =>//for (int i = 0; i < m; i++)
                 {
                     for (int j = 0; j < p; j++)
                     {
@@ -308,9 +309,24 @@ namespace MathDotNET.LinearAlgebra
                             result[i][j] = operators.add(operators.multiply(L.values[i][k], R.values[k][j]), result[i][j]);
                         }
                     }
-                }
+                });
 
                 return new Matrix<U>(result);
+            }
+        }
+        /// <summary>
+        /// Matrix type U cast to U
+        /// </summary>
+        /// <param name="R">Right matrix</param>
+        public static implicit operator U(Matrix<U> R)
+        {
+            if(R.M != 1 || R.N != 1)
+            {
+                throw new InvalidOperationException("Invalid dimensions for casting to type " + typeof(U).ToString());
+            }
+            else
+            {
+                return R.Get(0, 0);
             }
         }
         /// <summary>
