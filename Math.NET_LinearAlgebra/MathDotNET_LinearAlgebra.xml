@@ -4,63 +4,6 @@
         <name>MathDotNET_LinearAlgebra</name>
     </assembly>
     <members>
-        <member name="T:MathDotNET.IMathOperators`1">
-            <summary>
-            An interface for math operator functions of type T
-            </summary>
-            <typeparam name="T">datatype</typeparam>
-        </member>
-        <member name="M:MathDotNET.IMathOperators`1.add(`0,`0)">
-            <summary>
-            Addition operator
-            </summary>
-            <param name="a"></param>
-            <param name="b"></param>
-            <returns>a+b</returns>
-        </member>
-        <member name="M:MathDotNET.IMathOperators`1.subtract(`0,`0)">
-            <summary>
-            Subtraction operator
-            </summary>
-            <param name="a"></param>
-            <param name="b"></param>
-            <returns>a-b</returns>
-        </member>
-        <member name="M:MathDotNET.IMathOperators`1.multiply(`0,`0)">
-            <summary>
-            Multiplication operator
-            </summary>
-            <param name="a"></param>
-            <param name="b"></param>
-            <returns>a*b</returns>
-        </member>
-        <member name="M:MathDotNET.IMathOperators`1.divide(`0,`0)">
-            <summary>
-            Division operator
-            </summary>
-            <param name="a"></param>
-            <param name="b"></param>
-            <returns>a/b</returns>
-        </member>
-        <member name="M:MathDotNET.IMathOperators`1.sqrt(`0)">
-            <summary>
-            Square root operator
-            </summary>
-            <param name="a"></param>
-            <returns>Sqrt(a)</returns>
-        </member>
-        <member name="M:MathDotNET.IMathOperators`1.GetZeroValue">
-            <summary>
-            Default zero operator
-            </summary>
-            <returns>The zero of the datatype T</returns>
-        </member>
-        <member name="M:MathDotNET.IMathOperators`1.GetOneValue">
-            <summary>
-            Default one operator
-            </summary>
-            <returns>The one of the datatype T</returns>
-        </member>
         <member name="T:MathDotNET.LinearAlgebra.Matrix`1">
             <summary>
             M by N matrix of type U
@@ -202,7 +145,7 @@
             <summary>
             Matrix values
             </summary>
-            <returns>A A read-only collection</returns>
+            <returns>A read-only collection</returns>
         </member>
         <member name="M:MathDotNET.LinearAlgebra.Matrix`1.ToString">
             <summary>
@@ -403,6 +346,63 @@
             Serves as the default hash function
             </summary>
             <returns>A hash code for the current object</returns>
+        </member>
+        <member name="T:MathDotNET.IMathOperators`1">
+            <summary>
+            An interface for math operator functions of type T
+            </summary>
+            <typeparam name="T">datatype</typeparam>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.add(`0,`0)">
+            <summary>
+            Addition operator
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns>a+b</returns>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.subtract(`0,`0)">
+            <summary>
+            Subtraction operator
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns>a-b</returns>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.multiply(`0,`0)">
+            <summary>
+            Multiplication operator
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns>a*b</returns>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.divide(`0,`0)">
+            <summary>
+            Division operator
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns>a/b</returns>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.sqrt(`0)">
+            <summary>
+            Square root operator
+            </summary>
+            <param name="a"></param>
+            <returns>Sqrt(a)</returns>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.GetZeroValue">
+            <summary>
+            Default zero operator
+            </summary>
+            <returns>The zero of the datatype T</returns>
+        </member>
+        <member name="M:MathDotNET.IMathOperators`1.GetOneValue">
+            <summary>
+            Default one operator
+            </summary>
+            <returns>The one of the datatype T</returns>
         </member>
     </members>
 </doc>

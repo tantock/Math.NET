@@ -6,8 +6,8 @@
     <AssemblyName>MathDotNET.Random</AssemblyName>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\Users\Gabriel\Documents\Visual Studio 2019\Projects\Math.NET\Math.Net_Random\MathDotNet_Random.xml</DocumentationFile>
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\MathDotNet_Random.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>

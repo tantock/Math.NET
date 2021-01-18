@@ -1,88 +1,58 @@
-﻿using MathDotNET.MathOperators;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace MathDotNET.LinearAlgebra
 {
+    [Serializable]
     /// <summary>
-    /// N vector object of type T
+    /// N vector object of type double
     /// </summary>
-    /// <typeparam name="T">datatype</typeparam>
-    public class Vector<T>
+    public class DoubleVector
     {
-        private T[] values;
+        private double[] values;
 
         readonly int numEntries;
 
-        private static IMathOperators<T> operators;
-
-        private void setOperators()
-        {
-            if (operators == null)
-            {
-                Type datatype = typeof(T);
-                if (datatype == typeof(double))
-                {
-                    operators = (IMathOperators<T>)new DoubleOperators();
-                }
-                else if (datatype == typeof(float))
-                {
-                    operators = (IMathOperators<T>)new FloatOperators();
-                }
-                else if (datatype == typeof(int))
-                {
-                    operators = (IMathOperators<T>)new IntOperators();
-                }
-                else
-                {
-                    throw new NotImplementedException("Datatype unknown for math operators");
-                }
-            }
-        }
         /// <summary>
         /// Creates a vector object of size N
         /// </summary>
         /// <param name="N">Number of elements in the vector</param>
-        public Vector(int N)
+        public DoubleVector(int N)
         {
             numEntries = N;
-            values = new T[N];
-            setOperators();
-            for(int i = 0; i < N; i++)
-            {
-                values[i] = operators.GetZeroValue();
-            }
+            values = new double[N];
         }
         /// <summary>
         /// Copies the reference of an array
         /// </summary>
         /// <param name="values">Pass by reference</param>
-        public Vector(T[] values)
+        public DoubleVector(double[] values)
         {
-            this.values = values;//new T[values.Length];
+            this.values = values;//new double[values.Length];
             numEntries = values.Length;
-            setOperators();
+
             //Array.Copy(values, this.values, values.Length);
         }
         /// <summary>
         /// Deep copies a vector object
         /// </summary>
         /// <param name="toCopy"></param>
-        public Vector(Vector<T> toCopy)
+        public DoubleVector(DoubleVector toCopy)
         {
-            this.values = new T[toCopy.values.Length];
+            this.values = new double[toCopy.values.Length];
             this.numEntries = toCopy.numEntries;
             Array.Copy(toCopy.values, this.values, toCopy.values.Length);
-            setOperators();
         }
         /// <summary>
         /// Converts a Matrix to a Vector object
         /// </summary>
         /// <param name="toCast"></param>
         /// <exception cref="InvalidCastException">Thrown when the matrix is not 1 dimensional</exception>
-        public Vector(Matrix<T> toCast)
+        public DoubleVector(DoubleMatrix toCast)
         {
-            if(!(toCast.M == 1 || toCast.N == 1))
+            if (!(toCast.M == 1 || toCast.N == 1))
             {
                 throw new InvalidCastException("Matrix not 1 dimensional");
             }
@@ -90,24 +60,24 @@ namespace MathDotNET.LinearAlgebra
             {
                 int counter = 0;
                 this.numEntries = toCast.N * toCast.M;
-                this.values = new T[this.numEntries];
+                this.values = new double[this.numEntries];
                 for (int i = 0; i < toCast.M; i++)
                 {
-                    for(int j = 0; j < toCast.N; j++)
+                    for (int j = 0; j < toCast.N; j++)
                     {
                         values[counter] = toCast.Get(i, j);
                         counter++;
                     }
                 }
             }
-            setOperators();
+
         }
         /// <summary>
         /// Gets the i-th value of the vector
         /// </summary>
         /// <param name="i"></param>
         /// <returns></returns>
-        public T Get(int i)
+        public double Get(int i)
         {
             return values[i];
         }
@@ -116,7 +86,7 @@ namespace MathDotNET.LinearAlgebra
         /// </summary>
         /// <param name="i"></param>
         /// <param name="value">Sets as this value</param>
-        public void Set(int i, T value)
+        public void Set(int i, double value)
         {
             values[i] = value;
         }
@@ -138,9 +108,9 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left vector</param>
         /// <param name="R">Right vector</param>
         /// <returns>new Vector(L+R)</returns>
-        public static Vector<T> operator +(Vector<T> L, Vector<T> R)
+        public static DoubleVector operator +(DoubleVector L, DoubleVector R)
         {
-            T[] result = new T[L.numEntries];
+            double[] result = new double[L.numEntries];
             if (R.numEntries != L.numEntries)
             {
                 throw new InvalidOperationException("Invalid dimensions for vector addition");
@@ -149,10 +119,25 @@ namespace MathDotNET.LinearAlgebra
             {
                 for (int i = 0; i < result.Length; i++)
                 {
-                    result[i] = operators.add(L.values[i], R.values[i]);
+                    result[i] = L.values[i] + R.values[i];
                 }
-                return new Vector<T>(result);
+                return new DoubleVector(result);
             }
+        }
+        /// <summary>
+        /// Element-wise addition
+        /// </summary>
+        /// <param name="L">Left vector</param>
+        /// <param name="k">Scalar value</param>
+        /// <returns>new Vector(L+R)</returns>
+        public static DoubleVector operator +(DoubleVector L, double k)
+        {
+            double[] result = new double[L.numEntries];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = L.values[i] + k;
+            }
+            return new DoubleVector(result);
         }
         /// <summary>
         /// Vector subtraction
@@ -160,9 +145,9 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left vector</param>
         /// <param name="R">Right vector</param>
         /// <returns>new Vector(L-R)</returns>
-        public static Vector<T> operator -(Vector<T> L, Vector<T> R)
+        public static DoubleVector operator -(DoubleVector L, DoubleVector R)
         {
-            T[] result = new T[L.numEntries];
+            double[] result = new double[L.numEntries];
             if (R.numEntries != L.numEntries)
             {
                 throw new InvalidOperationException("Invalid dimensions for vector subtraction");
@@ -171,24 +156,39 @@ namespace MathDotNET.LinearAlgebra
             {
                 for (int i = 0; i < result.Length; i++)
                 {
-                    result[i] = operators.subtract(L.values[i], R.values[i]);
+                    result[i] = L.values[i] - R.values[i];
                 }
-                return new Vector<T>(result);
+                return new DoubleVector(result);
             }
+        }
+        /// <summary>
+        /// Element-wise subtraction
+        /// </summary>
+        /// <param name="L">Left vector</param>
+        /// <param name="k">Scalar value</param>
+        /// <returns>new Vector(L+R)</returns>
+        public static DoubleVector operator -(DoubleVector L, double k)
+        {
+            double[] result = new double[L.numEntries];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = L.values[i] - k;
+            }
+            return new DoubleVector(result);
         }
         /// <summary>
         /// Vector negation
         /// </summary>
         /// <param name="R">Right vector</param>
         /// <returns>new Vector(-R)</returns>
-        public static Vector<T> operator -(Vector<T> R)
+        public static DoubleVector operator -(DoubleVector R)
         {
-            T[] result = new T[R.numEntries];
+            double[] result = new double[R.numEntries];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = operators.subtract(operators.GetZeroValue(), R.values[i]);
+                result[i] = -R.values[i];
             }
-            return new Vector<T>(result);
+            return new DoubleVector(result);
         }
         /// <summary>
         /// Vector multiplication
@@ -196,19 +196,19 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left matrix</param>
         /// <param name="R">Right matrix</param>
         /// <returns>scalar(L*R)</returns>
-        public static T operator *(Vector<T> L, Vector<T> R)
+        public static double operator *(DoubleVector L, DoubleVector R)
         {
-            T result;
+            double result;
             if (R.numEntries != L.numEntries)
             {
                 throw new InvalidOperationException("Invalid dimensions for vector multiplication");
             }
             else
             {
-                result = operators.GetZeroValue();
+                result = 0;
                 for (int i = 0; i < R.numEntries; i++)
                 {
-                    result = operators.add(operators.multiply(L.values[i], R.values[i]), result);
+                    result += L.values[i] * R.values[i];
                 }
                 return result;
             }
@@ -219,14 +219,14 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left vector</param>
         /// <param name="R">Right vector</param>
         /// <returns>new Vector(L&amp;R)</returns>
-        public static Vector<T> operator &(Vector<T> L, Vector<T> R)
+        public static DoubleVector operator &(DoubleVector L, DoubleVector R)
         {
-            T[] result = new T[L.numEntries];
+            double[] result = new double[L.numEntries];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = operators.multiply(L.values[i], R.values[i]);
+                result[i] = L.values[i] * R.values[i];
             }
-            return new Vector<T>(result);
+            return new DoubleVector(result);
         }
         /// <summary>
         /// Vector scalar multiplication
@@ -234,14 +234,14 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="k">Scalar multiple</param>
         /// <param name="R">Right vector</param>
         /// <returns>new Vector(k*R)</returns>
-        public static Vector<T> operator *(T k, Vector<T> R)
+        public static DoubleVector operator *(double k, DoubleVector R)
         {
-            T[] result = new T[R.numEntries];
+            double[] result = new double[R.numEntries];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = operators.multiply(R.values[i], k);
+                result[i] = R.values[i] * k;
             }
-            return new Vector<T>(result);
+            return new DoubleVector(result);
         }
         /// <summary>
         /// Vector scalar multiplication
@@ -249,7 +249,7 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left vector</param>
         /// <param name="k">Scalar multiple</param>
         /// <returns>new Vector(L*k)</returns>
-        public static Vector<T> operator *(Vector<T> L, T k)
+        public static DoubleVector operator *(DoubleVector L, double k)
         {
             return k * L;
         }
@@ -259,14 +259,29 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left vector</param>
         /// <param name="k">Scalar multiple</param>
         /// <returns>new Vector(L/k)</returns>
-        public static Vector<T> operator /(Vector<T> L, T k)
+        public static DoubleVector operator /(DoubleVector L, double k)
         {
-            T[] result = new T[L.numEntries];
+            double[] result = new double[L.numEntries];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = operators.divide(L.values[i], k);
+                result[i] = L.values[i] / k;
             }
-            return new Vector<T>(result);
+            return new DoubleVector(result);
+        }
+        /// <summary>
+        /// Vector element-wise division
+        /// </summary>
+        /// <param name="L">Left vector</param>
+        /// <param name="R">Right vector</param>
+        /// <returns>new Vector(L&amp;R)</returns>
+        public static DoubleVector operator %(DoubleVector L, DoubleVector R)
+        {
+            double[] result = new double[L.numEntries];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = L.values[i] / R.values[i];
+            }
+            return new DoubleVector(result);
         }
         /// <summary>
         /// Vector outer product
@@ -274,14 +289,14 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left vector</param>
         /// <param name="R">Right vector</param>
         /// <returns>new Matrix(L^R)</returns>
-        public static Matrix<T> operator ^(Vector<T> L, Vector<T> R)
+        public static DoubleMatrix operator ^(DoubleVector L, DoubleVector R)
         {
-            var result = new Matrix<T>(L.Size, R.Size);
-            for(int i = 0; i < L.Size; i++)
+            var result = new DoubleMatrix(L.Size, R.Size);
+            for (int i = 0; i < L.Size; i++)
             {
-                for(int j = 0; j < R.Size; j++)
+                for (int j = 0; j < R.Size; j++)
                 {
-                    result.Set(i, j, operators.multiply(L.Get(i) , R.Get(j)));
+                    result.Set(i, j, L.Get(i) * R.Get(j));
                 }
             }
             return result;
@@ -295,10 +310,10 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="A">Matrix</param>
         /// <param name="v">Vector</param>
         /// <returns>new Vector(A*v)</returns>
-        public static Vector<T> operator * (Matrix<T>A, Vector<T> v)
+        public static DoubleVector operator *(DoubleMatrix A, DoubleVector v)
         {
-            Matrix<T> vector = new Matrix<T>(v, true);
-            return new Vector<T>(A * vector);
+            DoubleMatrix vector = new DoubleMatrix(v, true);
+            return new DoubleVector(A * vector);
         }
         /// <summary>
         /// Matrix-vector multiplication
@@ -306,34 +321,46 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="v">Vector</param>
         /// <param name="A">Matrix</param>
         /// <returns>new Vector(v*A)</returns>
-        public static Vector<T> operator *(Vector<T> v, Matrix<T> A)
+        public static DoubleVector operator *(DoubleVector v, DoubleMatrix A)
         {
-            Matrix<T> vector = new Matrix<T>(v, false);
-            return new Vector<T>(vector * A);
+            DoubleMatrix vector = new DoubleMatrix(v, false);
+            return new DoubleVector(vector * A);
         }
         #endregion
 
         /// <summary>
+        /// Returns the element-wise power of the vector
+        /// </summary>
+        public DoubleVector Pow(double power)
+        {
+            double[] result = new double[numEntries];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = Math.Pow(values[i], power);
+            }
+            return new DoubleVector(result);
+        }
+        /// <summary>
         /// Returns the Euclidean length of the vector
         /// </summary>
-        public T EuclidLength
+        public double EuclidLength
         {
             get
             {
-                T norm = operators.GetZeroValue();
+                double norm = 0;
                 for (int i = 0; i < Size; i++)
                 {
                     var value = Get(i);
-                    norm = operators.add(norm, operators.multiply(value, value));
+                    norm += value * value;
                 }
-                return operators.sqrt(norm);
+                return Math.Sqrt(norm);
             }
         }
         /// <summary>
         /// Vector values
         /// </summary>
         /// <returns>A read only collection</returns>
-        public ReadOnlyCollection<T> GetReadOnlyValuesCollection()
+        public ReadOnlyCollection<double> GetReadOnlyValuesCollection()
         {
             return Array.AsReadOnly(values);
         }
@@ -352,7 +379,7 @@ namespace MathDotNET.LinearAlgebra
         /// <returns>true if the specified object is equal to the current object; otherwise, false</returns>
         public override bool Equals(object obj)
         {
-            var item = obj as Vector<T>;
+            var item = obj as DoubleVector;
             if (item == null || item.Size != this.Size)
             {
                 return false;

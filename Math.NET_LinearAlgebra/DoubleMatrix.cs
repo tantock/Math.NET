@@ -1,23 +1,19 @@
-﻿using MathDotNET.MathOperators;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MathDotNET.LinearAlgebra
 {
-    /// <summary>
-    /// M by N matrix of type U
-    /// </summary>
-    /// <typeparam name="U">datatype</typeparam>
-    public class Matrix<U>
+    [Serializable]
+    public class DoubleMatrix
     {
-        private U[][] values;
-        
+        private double[][] values;
+
         readonly int numRows;
         readonly int numColumns;
 
-        private static IMathOperators<U> operators;
         /// <summary>
         /// Number of rows
         /// </summary>
@@ -33,37 +29,12 @@ namespace MathDotNET.LinearAlgebra
             get { return numColumns; }
         }
 
-        private void setOperators()
-        {
-            if(operators == null)
-            {
-                Type datatype = typeof(U);
-                if (datatype == typeof(double))
-                {
-                    operators = (IMathOperators<U>)new DoubleOperators();
-                }
-                else if(datatype == typeof(float))
-                {
-                    operators = (IMathOperators<U>)new FloatOperators();
-                }
-                else if(datatype == typeof(int))
-                {
-                    operators = (IMathOperators<U>)new IntOperators();
-                }
-                else
-                {
-                    throw new NotImplementedException("Datatype unknown for math operators");
-                }
-            }
-        }
-
         /// <summary>
         /// Copies the reference of a 2d array
         /// </summary>
         /// <param name="values">Pass by reference</param>
-        public Matrix(U[][] values)
+        public DoubleMatrix(double[][] values)
         {
-            setOperators();
             this.values = values;//new U[values.Length][];
             numRows = values.Length;
             numColumns = values[0].Length;
@@ -77,15 +48,14 @@ namespace MathDotNET.LinearAlgebra
         /// Deep copies a matrix object
         /// </summary>
         /// <param name="toCopy"></param>
-        public Matrix(Matrix<U> toCopy)
+        public DoubleMatrix(DoubleMatrix toCopy)
         {
-            setOperators();
-            this.values = new U[toCopy.numRows][];
+            this.values = new double[toCopy.numRows][];
             numRows = toCopy.numRows;
             numColumns = toCopy.numColumns;
             for (int i = 0; i < numRows; i++)
             {
-                this.values[i] = new U[numColumns];
+                this.values[i] = new double[numColumns];
                 Array.Copy(toCopy.values[i], this.values[i], toCopy.values[i].Length);
             }
         }
@@ -94,18 +64,17 @@ namespace MathDotNET.LinearAlgebra
         /// </summary>
         /// <param name="M">Number of rows</param>
         /// <param name="N">Number of columns</param>
-        public Matrix(int M, int N)
+        public DoubleMatrix(int M, int N)
         {
-            setOperators();
             numRows = M;
             numColumns = N;
-            values = new U[numRows][];
+            values = new double[numRows][];
             for (int i = 0; i < numRows; i++)
             {
-                this.values[i] = new U[numColumns];
-                for(int j = 0; j < numColumns; j++)
+                this.values[i] = new double[numColumns];
+                for (int j = 0; j < numColumns; j++)
                 {
-                    this.values[i][j] = operators.GetZeroValue();
+                    this.values[i][j] = 0;
                 }
             }
         }
@@ -114,7 +83,7 @@ namespace MathDotNET.LinearAlgebra
         /// </summary>
         /// <param name="toCast"></param>
         /// <param name="isColumnVector">Determines if the vector object should be represented as a column or row vector</param>
-        public Matrix(Vector<U> toCast, bool isColumnVector) : this(isColumnVector ? toCast.Size : 1, isColumnVector? 1 : toCast.Size)
+        public DoubleMatrix(DoubleVector toCast, bool isColumnVector) : this(isColumnVector ? toCast.Size : 1, isColumnVector ? 1 : toCast.Size)
         {
             if (isColumnVector)
             {
@@ -130,7 +99,6 @@ namespace MathDotNET.LinearAlgebra
                     this.values[0][i] = toCast.Get(i);
                 }
             }
-            setOperators();
         }
         /// <summary>
         /// Gets the i-th and j-th value of the matrix
@@ -138,7 +106,7 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="i">Number of rows down</param>
         /// <param name="j">Number of columns across</param>
         /// <returns></returns>
-        public U Get(int i, int j)
+        public double Get(int i, int j)
         {
             return values[i][j];
         }
@@ -148,24 +116,24 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="i">Number of rows down</param>
         /// <param name="j">Number of columns across</param>
         /// <param name="value"></param>
-        public void Set(int i, int j, U value)
+        public void Set(int i, int j, double value)
         {
             values[i][j] = value;
         }
         /// <summary>
         /// Transposes a matrix
         /// </summary>
-        public Matrix<U> T
+        public DoubleMatrix T
         {
             get
             {
                 int m = this.N;
                 int n = this.M;
-                U[][] result = new U[m][];
+                double[][] result = new double[m][];
                 //create new 2d array
                 for (int i = 0; i < m; i++)
                 {
-                    result[i] = new U[n];
+                    result[i] = new double[n];
                 }
                 //tranpose
                 for (int i = 0; i < m; i++)
@@ -176,7 +144,7 @@ namespace MathDotNET.LinearAlgebra
                     }
                 }
 
-                return new Matrix<U>(result);
+                return new DoubleMatrix(result);
             }
         }
 
@@ -187,11 +155,11 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left matrix</param>
         /// <param name="R">Right matrix</param>
         /// <returns>new Matrix(L+R)</returns>
-        public static Matrix<U> operator +(Matrix<U> L, Matrix<U> R)
+        public static DoubleMatrix operator +(DoubleMatrix L, DoubleMatrix R)
         {
             int m = L.numRows;
             int n = L.numColumns;
-            U[][] result = new U[m][];
+            double[][] result = new double[m][];
 
             if (R.numRows != L.numRows || R.numColumns != L.numColumns)
             {
@@ -202,19 +170,46 @@ namespace MathDotNET.LinearAlgebra
                 //create new 2d array
                 for (int i = 0; i < m; i++)
                 {
-                    result[i] = new U[n];
+                    result[i] = new double[n];
                 }
                 //add
                 for (int i = 0; i < m; i++)
                 {
                     for (int j = 0; j < n; j++)
                     {
-                        result[i][j] = Matrix<U>.operators.add(L.values[i][j], R.values[i][j]);
+                        result[i][j] = L.values[i][j] + R.values[i][j];
                     }
                 }
 
-                return new Matrix<U>(result);
+                return new DoubleMatrix(result);
             }
+        }
+        /// <summary>
+        /// Element-wise addition
+        /// </summary>
+        /// <param name="L">Left matrix</param>
+        /// <param name="k">scalar</param>
+        /// <returns>new Matrix(L+R)</returns>
+        public static DoubleMatrix operator +(DoubleMatrix L, double k)
+        {
+            int m = L.numRows;
+            int n = L.numColumns;
+            double[][] result = new double[m][];
+            //create new 2d array
+            for (int i = 0; i < m; i++)
+            {
+                result[i] = new double[n];
+            }
+            //add
+            for (int i = 0; i < m; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    result[i][j] = L.values[i][j] + k;
+                }
+            }
+
+            return new DoubleMatrix(result);
         }
         /// <summary>
         /// Matrix subtraction
@@ -222,11 +217,11 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left matrix</param>
         /// <param name="R">Right matrix</param>
         /// <returns>new Matrix(L-R)</returns>
-        public static Matrix<U> operator -(Matrix<U> L, Matrix<U> R)
+        public static DoubleMatrix operator -(DoubleMatrix L, DoubleMatrix R)
         {
             int m = L.numRows;
             int n = L.numColumns;
-            U[][] result = new U[m][];
+            double[][] result = new double[m][];
 
             if (R.numRows != L.numRows || R.numColumns != L.numColumns)
             {
@@ -237,43 +232,70 @@ namespace MathDotNET.LinearAlgebra
                 //create new 2d array
                 for (int i = 0; i < m; i++)
                 {
-                    result[i] = new U[n];
+                    result[i] = new double[n];
                 }
                 //add
                 for (int i = 0; i < m; i++)
                 {
                     for (int j = 0; j < n; j++)
                     {
-                        result[i][j] = Matrix<U>.operators.subtract(L.values[i][j], R.values[i][j]);
+                        result[i][j] = L.values[i][j] - R.values[i][j];
                     }
                 }
 
-                return new Matrix<U>(result);
+                return new DoubleMatrix(result);
             }
+        }
+        /// <summary>
+        /// Element-wise subtraction
+        /// </summary>
+        /// <param name="L">Left matrix</param>
+        /// <param name="k">scalar</param>
+        /// <returns>new Matrix(L+R)</returns>
+        public static DoubleMatrix operator -(DoubleMatrix L, double k)
+        {
+            int m = L.numRows;
+            int n = L.numColumns;
+            double[][] result = new double[m][];
+            //create new 2d array
+            for (int i = 0; i < m; i++)
+            {
+                result[i] = new double[n];
+            }
+            //add
+            for (int i = 0; i < m; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    result[i][j] = L.values[i][j] - k;
+                }
+            }
+
+            return new DoubleMatrix(result);
         }
         /// <summary>
         /// Matrix negation
         /// </summary>
         /// <param name="R">Right matrix</param>
         /// <returns>new Matrix(-R)</returns>
-        public static Matrix<U> operator -(Matrix<U> R)
+        public static DoubleMatrix operator -(DoubleMatrix R)
         {
             int m = R.numRows;
             int n = R.numColumns;
-            U[][] result = new U[m][];
+            double[][] result = new double[m][];
             //create new 2d array
             for (int i = 0; i < m; i++)
             {
-                result[i] = new U[n];
+                result[i] = new double[n];
             }
             for (int i = 0; i < m; i++)
             {
                 for (int j = 0; j < n; j++)
                 {
-                    result[i][j] = operators.subtract(operators.GetZeroValue(), R.values[i][j]);
+                    result[i][j] = -R.values[i][j];
                 }
             }
-            return new Matrix<U>(result);
+            return new DoubleMatrix(result);
         }
         /// <summary>
         /// Matrix multiplication
@@ -281,12 +303,12 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left matrix</param>
         /// <param name="R">Right matrix</param>
         /// <returns>new Matrix(L*R)</returns>
-        public static Matrix<U> operator *(Matrix<U> L, Matrix<U> R)
+        public static DoubleMatrix operator *(DoubleMatrix L, DoubleMatrix R)
         {
             int m = L.M;
             int n = L.N;
             int p = R.N;
-            U[][] result = new U[m][];
+            double[][] result = new double[m][];
 
             if (R.numRows != L.numColumns)
             {
@@ -294,35 +316,49 @@ namespace MathDotNET.LinearAlgebra
             }
             else
             {
-                //create new 2d array
-                for (int i = 0; i < m; i++)
-                {
-                    result[i] = new U[p];
-                }
-                Parallel.For(0, m, i =>//for (int i = 0; i < m; i++)
-                {
-                    for (int j = 0; j < p; j++)
-                    {
-                        result[i][j] = operators.GetZeroValue();
-                        for (int k = 0; k < n; k++)
-                        {
-                            result[i][j] = operators.add(operators.multiply(L.values[i][k], R.values[k][j]), result[i][j]);
-                        }
-                    }
-                });
+                var degreeOfParallelism = Environment.ProcessorCount;
 
-                return new Matrix<U>(result);
+                var tasks = new Task[degreeOfParallelism];
+
+                for (int taskNumber = 0; taskNumber < degreeOfParallelism; taskNumber++)
+                {
+                    // capturing taskNumber in lambda wouldn't work correctly
+                    int taskNumberCopy = taskNumber;
+
+                    tasks[taskNumber] = Task.Factory.StartNew(
+                        () =>
+                        {
+                            var max = m * (taskNumberCopy + 1) / degreeOfParallelism;
+                            for (int i = m * taskNumberCopy / degreeOfParallelism;
+                                i < max;
+                                i++)
+                            {
+                                result[i] = new double[p];
+                                for (int j = 0; j < p; j++)
+                                {
+                                    for (int k = 0; k < n; k++)
+                                    {
+                                        result[i][j] += L.values[i][k] * R.values[k][j];
+                                    }
+                                }
+                            }
+                        });
+                }
+
+                Task.WaitAll(tasks);
+
+                return new DoubleMatrix(result);
             }
         }
         /// <summary>
         /// Matrix type U cast to U
         /// </summary>
         /// <param name="R">Right matrix</param>
-        public static implicit operator U(Matrix<U> R)
+        public static implicit operator double(DoubleMatrix R)
         {
-            if(R.M != 1 || R.N != 1)
+            if (R.M != 1 || R.N != 1)
             {
-                throw new InvalidOperationException("Invalid dimensions for casting to type " + typeof(U).ToString());
+                throw new InvalidOperationException("Invalid dimensions for casting to type " + typeof(double).ToString());
             }
             else
             {
@@ -335,11 +371,11 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left matrix</param>
         /// <param name="R">Right matrix</param>
         /// <returns>new Matrix(L&amp;R)</returns>
-        public static Matrix<U> operator &(Matrix<U> L, Matrix<U> R)
+        public static DoubleMatrix operator &(DoubleMatrix L, DoubleMatrix R)
         {
             int m = L.numRows;
             int n = L.numColumns;
-            U[][] result = new U[m][];
+            double[][] result = new double[m][];
 
             if (R.numRows != L.numRows || R.numColumns != L.numColumns)
             {
@@ -350,17 +386,51 @@ namespace MathDotNET.LinearAlgebra
                 //create new 2d array
                 for (int i = 0; i < m; i++)
                 {
-                    result[i] = new U[n];
+                    result[i] = new double[n];
                 }
                 for (int i = 0; i < m; i++)
                 {
                     for (int j = 0; j < n; j++)
                     {
-                        result[i][j] = operators.multiply(L.values[i][j], R.values[i][j]);
+                        result[i][j] = L.values[i][j] * R.values[i][j];
                     }
                 }
 
-                return new Matrix<U>(result);
+                return new DoubleMatrix(result);
+            }
+        }
+        /// <summary>
+        /// Matrix element-wise division
+        /// </summary>
+        /// <param name="L">Left matrix</param>
+        /// <param name="R">Right matrix</param>
+        /// <returns>new Matrix(L&amp;R)</returns>
+        public static DoubleMatrix operator %(DoubleMatrix L, DoubleMatrix R)
+        {
+            int m = L.numRows;
+            int n = L.numColumns;
+            double[][] result = new double[m][];
+
+            if (R.numRows != L.numRows || R.numColumns != L.numColumns)
+            {
+                throw new InvalidOperationException("Invalid dimensions for hadamard multiplication");
+            }
+            else
+            {
+                //create new 2d array
+                for (int i = 0; i < m; i++)
+                {
+                    result[i] = new double[n];
+                }
+                for (int i = 0; i < m; i++)
+                {
+                    for (int j = 0; j < n; j++)
+                    {
+                        result[i][j] = L.values[i][j] / R.values[i][j];
+                    }
+                }
+
+                return new DoubleMatrix(result);
             }
         }
         /// <summary>
@@ -369,24 +439,24 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="k">Scalar multiple</param>
         /// <param name="R">Right matrix</param>
         /// <returns>new Matrix(k*R)</returns>
-        public static Matrix<U> operator *(U k, Matrix<U> R)
+        public static DoubleMatrix operator *(double k, DoubleMatrix R)
         {
             int m = R.numRows;
             int n = R.numColumns;
-            U[][] result = new U[m][];
+            double[][] result = new double[m][];
             //create new 2d array
             for (int i = 0; i < m; i++)
             {
-                result[i] = new U[n];
+                result[i] = new double[n];
             }
             for (int i = 0; i < m; i++)
             {
                 for (int j = 0; j < n; j++)
                 {
-                    result[i][j] = operators.multiply(k, R.values[i][j]);
+                    result[i][j] = k* R.values[i][j];
                 }
             }
-            return new Matrix<U>(result);
+            return new DoubleMatrix(result);
         }
         /// <summary>
         /// Matrix scalar multiplication
@@ -394,7 +464,7 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left matrix</param>
         /// <param name="k">Scalar multiple</param>
         /// <returns>new Matrix(L*k)</returns>
-        public static Matrix<U> operator *(Matrix<U> L, U k)
+        public static DoubleMatrix operator *(DoubleMatrix L, double k)
         {
             return k * L;
         }
@@ -404,67 +474,89 @@ namespace MathDotNET.LinearAlgebra
         /// <param name="L">Left matrix</param>
         /// <param name="k">Scalar divisor</param>
         /// <returns>new Matrix(L/k)</returns>
-        public static Matrix<U> operator /(Matrix<U> L, U k)
+        public static DoubleMatrix operator /(DoubleMatrix L, double k)
         {
             int m = L.numRows;
             int n = L.numColumns;
-            U[][] result = new U[m][];
+            double[][] result = new double[m][];
             //create new 2d array
             for (int i = 0; i < m; i++)
             {
-                result[i] = new U[n];
+                result[i] = new double[n];
             }
             for (int i = 0; i < m; i++)
             {
                 for (int j = 0; j < n; j++)
                 {
-                    result[i][j] = operators.divide(L.values[i][j],k);
+                    result[i][j] = L.values[i][j]/ k;
                 }
             }
-            return new Matrix<U>(result);
+            return new DoubleMatrix(result);
         }
         #endregion
+        /// <summary>
+        /// Returns the element-wise power of this matrix
+        /// </summary>
+        /// <param name="power"></param>
+        /// <returns></returns>
+        public DoubleMatrix Pow(double power)
+        {
+            double[][] result = new double[M][];
+            //create new 2d array
+            for (int i = 0; i < M; i++)
+            {
+                result[i] = new double[N];
+            }
+            for (int i = 0; i < M; i++)
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    result[i][j] = Math.Pow(values[i][j], power);
+                }
+            }
 
+            return new DoubleMatrix(result);
+        }
         /// <summary>
         /// Returns the Frobenius norm of the matrix
         /// </summary>
-        public U Norm
+        public double Norm
         {
             get
             {
-                U norm = operators.GetZeroValue();
-                for(int i = 0; i < M; i++)
+                double norm = 0;
+                for (int i = 0; i < M; i++)
                 {
-                    for(int j = 0; j < N; j++)
+                    for (int j = 0; j < N; j++)
                     {
                         var value = Get(i, j);
-                        norm = operators.add(norm, operators.multiply(value, value));
+                        norm += (value * value);
                     }
                 }
-                return operators.sqrt(norm);
+                return Math.Sqrt(norm);
             }
         }
         /// <summary>
         /// Matrix values
         /// </summary>
         /// <returns>A read-only collection</returns>
-        public ReadOnlyCollection<ReadOnlyCollection<U>> GetReadOnlyValuesCollection()
+        public ReadOnlyCollection<ReadOnlyCollection<double>> GetReadOnlyValuesCollection()
         {
-            ReadOnlyCollection<U>[] ROArray = new ReadOnlyCollection<U>[M];
+            ReadOnlyCollection<double>[] ROArray = new ReadOnlyCollection<double>[M];
 
-            for(int i = 0; i < M; i++)
+            for (int i = 0; i < M; i++)
             {
                 ROArray[i] = Array.AsReadOnly(values[i]);
             }
             return Array.AsReadOnly(ROArray);
         }
-        public U[] To1D()
+        public double[] To1D()
         {
-            U[] flatten = new U[numRows * numColumns];
+            double[] flatten = new double[numRows * numColumns];
             int counter = 0;
-            for(int i = 0; i < numRows; i++)
+            for (int i = 0; i < numRows; i++)
             {
-                for(int j = 0; j < numColumns; j++)
+                for (int j = 0; j < numColumns; j++)
                 {
                     flatten[counter] = values[i][j];
                     counter++;
@@ -481,7 +573,7 @@ namespace MathDotNET.LinearAlgebra
             //string val = string.Join(",", values[0]);
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(string.Join(",", values[0]));
-            for(int i = 1; i < M; i++)
+            for (int i = 1; i < M; i++)
             {
                 sb.AppendLine(string.Join(",", values[i]));
             }
@@ -494,17 +586,17 @@ namespace MathDotNET.LinearAlgebra
         /// <returns>true if the specified object is equal to the current object; otherwise, false</returns>
         public override bool Equals(object obj)
         {
-            var item = obj as Matrix<U>;
-            if(item == null || item.M != this.M || item.N != this.N)
+            var item = obj as DoubleMatrix;
+            if (item == null || item.M != this.M || item.N != this.N)
             {
                 return false;
             }
             else
             {
                 bool isEqual = true;
-                for(int i = 0; i < this.M && isEqual; i++)
+                for (int i = 0; i < this.M && isEqual; i++)
                 {
-                    for(int j = 0; j < this.N && isEqual; j++)
+                    for (int j = 0; j < this.N && isEqual; j++)
                     {
                         isEqual = this.Get(i, j).Equals(item.Get(i, j));
                     }
@@ -519,6 +611,17 @@ namespace MathDotNET.LinearAlgebra
         public override int GetHashCode()
         {
             return values.GetHashCode();
+        }
+
+        public static double[][] Identity(int size)
+        {
+            double[][] result = new double[size][];
+            for(int i = 0; i < size; i++)
+            {
+                result[i] = new double[size];
+                result[i][i] = 1;
+            }
+            return result;
         }
     }
 }

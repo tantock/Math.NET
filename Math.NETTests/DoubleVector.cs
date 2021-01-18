@@ -7,13 +7,13 @@ using System.Text;
 namespace MathDotNET.LinearAlgebra.Tests
 {
     [TestClass()]
-    public class VectorTests
+    public class DoubleVectorTests
     {
         [TestMethod()]
-        public void FloatVectorTestConstructor()
+        public void DoubleVectorTestConstructor()
         {
-            float[] a_data = new float[] { 1, 2, 3 };
-            var A = new Vector<float>(a_data);
+            double[] a_data = new double[] { 1, 2, 3 };
+            var A = new DoubleVector(a_data);
             Assert.AreEqual(A.Size, 3);
             for (int i = 0; i < a_data.Length; i++)
             {
@@ -21,26 +21,26 @@ namespace MathDotNET.LinearAlgebra.Tests
             }
         }
         [TestMethod()]
-        public void FloatVectorTestCopyConstructor()
+        public void DoubleVectorTestCopyConstructor()
         {
-            float[] a_data = new float[] { 1, 2, 3 };
-            var A = new Vector<float>(a_data);
-            var B = new Vector<float>(A);
+            double[] a_data = new double[] { 1, 2, 3 };
+            var A = new DoubleVector(a_data);
+            var B = new DoubleVector(A);
             Assert.AreEqual(A, B);
             A.Set(0, -A.Get(0)); //check that mutation doesn't leak into copied class
             Assert.AreNotEqual(A, B);
         }
         [TestMethod()]
-        public void FloatVectorTestMathOperators()
+        public void DoubleVectorTestMathOperators()
         {
-            var A = new Vector<float>(new float[] { 1, 2, 3 });
-            var minusA = new Vector<float>(new float[] { -1, -2, -3 });
-            var ATimes2 = new Vector<float>(new float[] { 2, 4, 6 });
-            var A0 = new Vector<float>(new float[] { 0, 0, 0 });
-            var B = new Vector<float>(new float[] { 1, 2, 3 });
-            var C = new Vector<float>(new float[] { 7, 8, 9 });
-            var D = new Vector<float>(new float[] { 4, 5 });
-            var AouterD = new Matrix<float>(new float[][] { new float[] { 4, 5 }, new float[] { 8, 10 }, new float[] { 12, 15 } });
+            var A = new DoubleVector(new double[] { 1, 2, 3 });
+            var minusA = new DoubleVector(new double[] { -1, -2, -3 });
+            var ATimes2 = new DoubleVector(new double[] { 2, 4, 6 });
+            var A0 = new DoubleVector(new double[] { 0, 0, 0 });
+            var B = new DoubleVector(new double[] { 1, 2, 3 });
+            var C = new DoubleVector(new double[] { 7, 8, 9 });
+            var D = new DoubleVector(new double[] { 4, 5 });
+            var AouterD = new DoubleMatrix(new double[][] { new double[] { 4, 5 }, new double[] { 8, 10 }, new double[] { 12, 15 } });
             var ATimesC = 50f;
 
             //addition
@@ -62,17 +62,17 @@ namespace MathDotNET.LinearAlgebra.Tests
             //vector outer product
             Assert.AreEqual(AouterD, A ^ D);
             //vector norm
-            Assert.AreEqual((float)System.Math.Sqrt(14), A.EuclidLength);
+            Assert.AreEqual((double)System.Math.Sqrt(14), A.EuclidLength);
             //Matrix-Vector multiplication
-            Matrix<float> M = new Matrix<float>(new float[][] { new float[] { 2, 0, 0 }, new float[] { 0, 2, 0 }, new float[] { 0, 0, 2 } });
+            DoubleMatrix M = new DoubleMatrix(new double[][] { new double[] { 2, 0, 0 }, new double[] { 0, 2, 0 }, new double[] { 0, 0, 2 } });
             Assert.AreEqual(ATimes2, M * A);
             Assert.AreEqual(ATimes2, A * M);
         }
         [TestMethod()]
-        public void FloatVectorTestReadOnlyCollectionGet()
+        public void DoubleVectorTestReadOnlyCollectionGet()
         {
-            var dataA = new float[] { 1, 2, 3 };
-            var A = new Vector<float>(dataA);
+            var dataA = new double[] { 1, 2, 3 };
+            var A = new DoubleVector(dataA);
             var ROCollection = A.GetReadOnlyValuesCollection();
             for (int i = 0; i < A.Size; i++)
             {

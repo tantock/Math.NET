@@ -12,8 +12,14 @@
     <Company />
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\Users\Gabriel\Documents\Visual Studio 2019\Projects\Math.NET\Math.NET_LinearAlgebra\MathDotNET_LinearAlgebra.xml</DocumentationFile>
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\MathDotNET_LinearAlgebra.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Cloo">
+      <HintPath>..\..\Cloo-master\Cloo\bin\Release\netstandard2.0\Cloo.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>

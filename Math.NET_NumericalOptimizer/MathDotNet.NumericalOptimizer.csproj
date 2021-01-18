@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MathDotNET.Collections.Generic\MathDotNET.Collections.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="MathDotNET_LinearAlgebra">
       <HintPath>..\Math.NET_LinearAlgebra\bin\Release\netstandard2.0\MathDotNET_LinearAlgebra.dll</HintPath>
     </Reference>

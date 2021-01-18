@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MathDotNET.NumericalOptimizer": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\Gabriel\\Documents\\Visual Studio 2019\\Projects\\StockPhaseSpace\\StockPhaseSpace\\bin\\Debug\\StockPhaseSpace.exe"
+    }
+  }
+}

@@ -3,6 +3,8 @@ using MathDotNET.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
+using System.Linq;
 
 namespace MathDotNET.LinearAlgebra.Tests
 {
@@ -70,6 +72,41 @@ namespace MathDotNET.LinearAlgebra.Tests
             Assert.AreEqual((float)System.Math.Sqrt(91), A.Norm);
             //Matrix downcast
             Assert.AreEqual(91f, rowVec * rowVec.T);
+        }
+        [TestMethod()]
+        public void ParallelVsNon()
+        {
+            int m = 10000;
+            int n = 10000;
+            List<TimeSpan> timesNon = new List<TimeSpan>();
+            Random rnd = new Random();
+            Matrix<double> A = new Matrix<double>(m, n);
+            Matrix<double> B = new Matrix<double>(m, n);
+
+            Stopwatch sw = new System.Diagnostics.Stopwatch();
+
+            int numTrials = 5;
+            for(int t = 0; t < numTrials; t++)
+            {
+                for (int i = 0; i < m; i++)
+                {
+                    for (int j = 0; j < n; j++)
+                    {
+                        A.Set(i, j, rnd.NextDouble());
+                        B.Set(i, j, rnd.NextDouble());
+                    }
+                }
+
+
+                sw.Start();
+                var C = A * B;
+                sw.Stop();
+                timesNon.Add(sw.Elapsed);
+                sw.Reset();
+            }
+
+            Debug.WriteLine("Avg: " + timesNon.Select(x => x.TotalMilliseconds).Average());
+
         }
 
         [TestMethod()]

@@ -1,21 +1,20 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MathDotNET.NumericalOptimizer;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using MathDotNET.NumericalOptimizer;
 using MathDotNET.LinearAlgebra;
-using System.Globalization;
 
-namespace MathDotNETTests.NumericalOptimizer
+namespace MathDotNET.NumericalOptimizer.Tests
 {
     [TestClass()]
-    public class BFGSTests
+    public class NonlinearConjugateGradientTests
     {
         [TestMethod()]
-        public void BFGSTestsMinimize()
+        public void NonlinearConjugateGradientTestsMinimize()
         {
             double tollerance = 1e-8;
-            var minimize = new BFGSMinimizer((x) =>
+            var minimize = new NonlinearConjugateGradient((x) =>
             {
                 //paraboloid function
                 double z = 1;
@@ -28,7 +27,7 @@ namespace MathDotNETTests.NumericalOptimizer
             (x) =>
             {
                 //paraboloid function gradient
-                DoubleVector z = new DoubleVector(x.Size);
+                Vector<double> z = new Vector<double>(x.Size);
                 for (int i = 0; i < x.Size; i++)
                 {
                     z.Set(i, 2 * (x.Get(i) + 5));
@@ -36,23 +35,19 @@ namespace MathDotNETTests.NumericalOptimizer
                 return z;
             });
 
-            var initialEstimate = new DoubleVector(new double[] { 10, 40, -50 });
+            var initialEstimate = new Vector<double>(new double[] { 1, 4, -5 });
 
             var t = minimize.Minimize(initialEstimate, new System.Threading.CancellationTokenSource());
-            t.Wait();
-            t.ContinueWith((a) =>
+
+            t.ContinueWith((antecedent) =>
             {
                 var expected = new Vector<double>(new double[] { -5, -5, -5 });
 
                 for (int i = 0; i < minimize.Solution.Size; i++)
                 {
                     Assert.AreEqual(expected.Get(i), minimize.Solution.Get(i), tollerance);
-                    System.Diagnostics.Debug.WriteLine(String.Format("Expected:{0},Actual:{1}", expected.Get(i), minimize.Solution.Get(i)));
                 }
             });
-
-
-
 
         }
     }

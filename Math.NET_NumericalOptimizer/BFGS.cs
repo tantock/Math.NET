@@ -1,26 +1,33 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MathDotNET.Collections.Statistics;
 using MathDotNET.LinearAlgebra;
 
 namespace MathDotNET.NumericalOptimizer
 {
     public class BFGSMinimizer
     {
-        public Func<Vector<double>, double> FuncToMinimize;
-        public Func<Vector<double>, Vector<double>> FuncGrad;
+        private const double TwoWayBacktrackingLineSearchStepSizeInit = 1;
+
+        public Func<DoubleVector, double> FuncToMinimize;
+        public Func<DoubleVector, DoubleVector> FuncGrad;
         public double c1Wolfe = 1e-4;
         public double c2Wolfe = 0.9;
 
-        Action<Vector<double>, double> callbackMethod;
+        Action<DoubleVector, double> callbackMethod;
         public double GradientTolerance = 1e-8;
+
+        private double initialStepSize = 1;
 
         public double smallestDouble { get { return double.Epsilon; } }
 
-        private Matrix<double> solution;
+        private DoubleVector solution;
 
         public int numStepsToConverge = 0;
-        public Matrix<double> Solution { get { return solution; } }
+        public DoubleVector Solution { get { return solution; } }
 
         /// <summary>
         /// Creates a BFGS minimizer class to solve for the parameters that minimize a function
@@ -28,71 +35,143 @@ namespace MathDotNET.NumericalOptimizer
         /// <param name="_FuncToMinimize">The function to minimize given an array of parameters</param>
         /// <param name="_FuncGrad">The gradient of the function given the current parameter used</param>
         /// <param name="callback">A callback method with the current solution and gradient norm as the argument</param>
-        public BFGSMinimizer(Func<Vector<double>, double> _FuncToMinimize, Func<Vector<double>, Vector<double>> _FuncGrad, Action<Vector<double>, double> callback = null)
+        public BFGSMinimizer(Func<DoubleVector, double> _FuncToMinimize, Func<DoubleVector, DoubleVector> _FuncGrad, Action<DoubleVector, double> callback = null)
         {
             FuncToMinimize = _FuncToMinimize;
             FuncGrad = _FuncGrad;
             callbackMethod = callback;
         }
 
-        public Task Minimize(Vector<double> initialX, CancellationTokenSource ctSource)
+        public Task<DoubleVector> Minimize(DoubleVector initialX, CancellationTokenSource ctSource)
         {
             CancellationToken ct = ctSource.Token;
-            var task = Task.Run(() =>
+            ct.ThrowIfCancellationRequested();
+            double prevStepSize = initialStepSize;
+            return Task.Run(() =>
             {
-                ct.ThrowIfCancellationRequested();
                 numStepsToConverge = 0;
-                Matrix<double> X = new Matrix<double>(initialX, true);
+                DoubleVector X = new DoubleVector(initialX);
 
-                Matrix<double> B_inv = MatrixBuilder<double>.Identity(initialX.Size);
+                DoubleMatrix B_inv = new DoubleMatrix(DoubleMatrix.Identity(initialX.Size));//MatrixBuilder<double>.Identity(initialX.Size);
 
-                Matrix<double> grad = new Matrix<double>(FuncGrad(initialX), true);
+                DoubleVector grad = new DoubleVector(FuncGrad(initialX));
 
-                Matrix<double> gradNextX = new Matrix<double>(initialX.Size, 1);
+                //B_inv /= grad.EuclidLength;
+
+                DoubleVector gradNextX = new DoubleVector(initialX.Size);
 
 
-                double normGrad = grad.Norm;
+                //double normGrad = grad.EuclidLength;
+                double gradNorm = grad.EuclidLength;
+
+                List<double> normGradList = new List<double>();
+                normGradList.Add(gradNorm);
 
                 double stepLength;
 
-                Matrix<double> s;
+                DoubleVector s;
 
-                Matrix<double> y;
+                DoubleVector y;
+                //DoubleVector p_init = (B_inv * -grad);
+                initialStepSize = 1024;
+                int numGradSamples = 5;
 
-                while (normGrad > GradientTolerance)
+                while (!double.IsNaN(gradNorm) && gradNorm > GradientTolerance)
                 {
-                    Matrix<double> p = (B_inv * -grad);
 
-                    //Matrix<double> p_unit = p / p.EuclidNorm;
+                    if (ct.IsCancellationRequested)
+                    {
+                        // Clean up here, then...
+                        solution = X;
+                        ct.ThrowIfCancellationRequested();
+                    }
+                    //B_inv /= grad.Norm;
 
-                    stepLength = backtrackingLineSearch(X, p, grad);
+                    DoubleVector p = (B_inv * -grad);
+                    //p /= p.EuclidLength;
+
+                    //DoubleMatrix p_unit = p / p.EuclidNorm;
+
+                    if (ct.IsCancellationRequested)
+                    {
+                        // Clean up here, then...
+                        solution = X;
+                        ct.ThrowIfCancellationRequested();
+                    }
+
+                    stepLength = backtrackingLineSearch(X, FuncToMinimize, grad, p, prevStepSize, ctSource);//backtrackingLineSearch(X, p, grad, initialStepSize);
+
+                    if (ct.IsCancellationRequested)
+                    {
+                        // Clean up here, then...
+                        //solution = X;
+                        ct.ThrowIfCancellationRequested();
+                    }
+
+                    prevStepSize = stepLength;
+                    if (stepLength < 1e-16 || double.IsNaN(stepLength))
+                    {
+                        break;
+                    }
 
                     s = stepLength * p;
 
                     X = X + s;
 
-                    gradNextX = new Matrix<double>(FuncGrad(new Vector<double>(X)), true);
+                    gradNextX = FuncGrad(X);
 
                     y = gradNextX - grad;
 
 
 
-                    double sT_y = s.T * y;
-                    double yT_Binv_y = y.T * B_inv * y;
+                    double sT_y = s * y;
 
-                    Matrix<double> secondTerm = ((sT_y + yT_Binv_y) / (sT_y * sT_y)) * (s * s.T);
 
-                    Matrix<double> thirdTerm = (B_inv * y * s.T + s * y.T * B_inv) / sT_y;
+                    if (ct.IsCancellationRequested)
+                    {
+                        // Clean up here, then...
+                        //solution = X;
+                        ct.ThrowIfCancellationRequested();
+                    }
+
+                    double yT_Binv_y = y * B_inv * y;
+
+                    DoubleMatrix secondTerm = ((sT_y + yT_Binv_y) / (sT_y * sT_y)) * (new DoubleMatrix(s, true) * new DoubleMatrix(s, false));
+
+                    DoubleMatrix thirdTerm = (((B_inv * new DoubleMatrix(y, true)) * new DoubleMatrix(s, false)) + ((new DoubleMatrix(s, true) * new DoubleMatrix(y, false)) * B_inv)) / sT_y;
 
                     B_inv += (secondTerm - thirdTerm);
 
                     grad = gradNextX;
-                    normGrad = grad.Norm;
+                    if (ct.IsCancellationRequested)
+                    {
+                        // Clean up here, then...
+                        //solution = X;
+                        ct.ThrowIfCancellationRequested();
+                    }
+
+                    gradNorm = grad.EuclidLength;
+
+                    if (double.IsNaN(gradNorm))
+                    {
+                        X -= s;
+                        break;
+                    }
+
+                    normGradList.Add(gradNorm);
+                    if (normGradList.Count() > numGradSamples)
+                    {
+                        normGradList.Remove(0);
+                    }
                     if (callbackMethod != null)
                     {
-                        callbackMethod(new Vector<double>(X), normGrad);
+                        callbackMethod(new DoubleVector(X), gradNorm);
                     }
                     numStepsToConverge++;
+                    if(gradNorm < GradientTolerance)
+                    {
+                        break;
+                    }
                     // Poll on this property if you have to do
                     // other cleanup before throwing.
                     if (ct.IsCancellationRequested)
@@ -102,17 +181,138 @@ namespace MathDotNET.NumericalOptimizer
                         ct.ThrowIfCancellationRequested();
                     }
                 }
+
+                solution = X;
+
+                return solution;
+            });
+        }
+        /*
+        public Task MinimizeGPU(DoubleVector initialX, CancellationTokenSource ctSource)
+        {
+            CancellationToken ct = ctSource.Token;
+            var task = Task.Run(() =>
+            {
+                ct.ThrowIfCancellationRequested();
+                numStepsToConverge = 0;
+                DoubleVector X = new DoubleVector(initialX);
+
+                DoubleMatrix B_inv = MatrixBuilder<double>.Identity(initialX.Size);
+
+                DoubleVector grad = new DoubleVector(FuncGrad(initialX));
+
+                //B_inv /= grad.EuclidLength;
+
+                DoubleVector gradNextX = new DoubleVector(initialX.Size);
+
+
+                //double normGrad = grad.EuclidLength;
+
+                List<double> normGradList = new List<double>();
+                normGradList.Add(grad.EuclidLength);
+
+                double stepLength;
+
+                DoubleVector s;
+
+                DoubleVector y;
+                //DoubleVector p_init = (B_inv * -grad);
+                initialStepSize = 1024;
+                int numGradSamples = 5;
+                using (var clMultiply = new DoubleMatrixOpenCL(0))
+                {
+                    while (!double.IsNaN(normGradList.Last()) && normGradList.Average() + 2 * normGradList.StandardDeviationP() > GradientTolerance)
+                    {
+
+                        if (ct.IsCancellationRequested)
+                        {
+                            // Clean up here, then...
+                            solution = X;
+                            ct.ThrowIfCancellationRequested();
+                        }
+                        //B_inv /= grad.Norm;
+
+                        DoubleVector p = (B_inv * -grad);
+
+                        //DoubleMatrix p_unit = p / p.EuclidNorm;
+
+                        if (ct.IsCancellationRequested)
+                        {
+                            // Clean up here, then...
+                            solution = X;
+                            ct.ThrowIfCancellationRequested();
+                        }
+
+                        stepLength = backtrackingLineSearch(X, p, grad, initialStepSize);
+
+                        s = stepLength * p;
+
+                        X = X + s;
+
+                        if (ct.IsCancellationRequested)
+                        {
+                            // Clean up here, then...
+                            solution = X;
+                            ct.ThrowIfCancellationRequested();
+                        }
+
+                        gradNextX = FuncGrad(X);
+
+                        y = gradNextX - grad;
+
+
+
+                        double sT_y = s * y;
+
+
+                        if (ct.IsCancellationRequested)
+                        {
+                            // Clean up here, then...
+                            solution = X;
+                            ct.ThrowIfCancellationRequested();
+                        }
+
+                        double yT_Binv_y = y * B_inv * y;
+
+                        DoubleMatrix secondTerm = ((sT_y + yT_Binv_y) / (sT_y * sT_y)) * (new DoubleMatrix(s, true) * new DoubleMatrix(s, false));
+
+                        DoubleMatrix thirdTerm = (clMultiply.Multiply((B_inv * new DoubleMatrix(y, true)), new DoubleMatrix(s, false)) + clMultiply.Multiply(new DoubleMatrix(s, true) * new DoubleMatrix(y, false), B_inv)) / sT_y;
+
+                        B_inv += (secondTerm - thirdTerm);
+
+                        grad = gradNextX;
+                        normGradList.Add(grad.EuclidLength);
+                        if (normGradList.Count() > numGradSamples)
+                        {
+                            normGradList.Remove(0);
+                        }
+                        if (callbackMethod != null)
+                        {
+                            callbackMethod(new DoubleVector(X), normGradList.Last());
+                        }
+                        numStepsToConverge++;
+                        // Poll on this property if you have to do
+                        // other cleanup before throwing.
+                        if (ct.IsCancellationRequested)
+                        {
+                            // Clean up here, then...
+                            solution = X;
+                            ct.ThrowIfCancellationRequested();
+                        }
+                    }
+                }
+
                 solution = X;
             }, ctSource.Token);
 
             return task;
         }
-
-        //public void backtrackingGD(Vector<double> initialX)
+        */
+        //public void backtrackingGD(DoubleVector initialX)
         //{
-        //    Matrix<double> gradF_of_x = new Matrix<double>(FuncGrad(initialX));
+        //    DoubleMatrix gradF_of_x = new DoubleMatrix(FuncGrad(initialX));
         //    double normGrad = gradF_of_x.EuclidNorm;
-        //    Matrix<double> X = new Matrix<double>(initialX);
+        //    DoubleMatrix X = new DoubleMatrix(initialX);
         //    double stepSize = 100;
 
         //    while (normGrad > GradientTolerance)
@@ -120,7 +320,7 @@ namespace MathDotNET.NumericalOptimizer
         //        var directionUnitVector = -gradF_of_x / normGrad;
         //        stepSize = backtrackingLineSearch(X, directionUnitVector, gradF_of_x, stepSize);
         //        X += stepSize * directionUnitVector;
-        //        gradF_of_x = new Matrix<double>(FuncGrad(X.Arr));
+        //        gradF_of_x = new DoubleMatrix(FuncGrad(X.Arr));
         //        normGrad = gradF_of_x.EuclidNorm;
 
         //        Debug.WriteLine(normGrad);
@@ -129,39 +329,77 @@ namespace MathDotNET.NumericalOptimizer
         //    solution = X;
         //}
 
-        private bool[] IsWolfeCondiMet(Matrix<double> X_k, Matrix<double> direction_k, double stepLength_k, Matrix<double> gradF_of_x = null)
+        private bool[] IsWolfeCondiMet(DoubleVector X_k, DoubleVector direction_k, double stepLength_k, DoubleVector gradF_of_x = null)
         {
-            Matrix<double> nextX = (X_k + stepLength_k * direction_k);
-            double f_of_x = FuncToMinimize(new Vector<double>(X_k));
+            DoubleVector nextX = (X_k + stepLength_k * direction_k);
+            double f_of_x = FuncToMinimize(new DoubleVector(X_k));
 
             if (gradF_of_x == null)
             {
-                gradF_of_x = new Matrix<double>(FuncGrad(new Vector<double>(X_k)),true);
+                gradF_of_x = FuncGrad(X_k);
             }
 
-            double f_of_nextX = FuncToMinimize(new Vector<double>(nextX));
-            Matrix<double> gradF_of_nextX = new Matrix<double>(FuncGrad(new Vector<double>(nextX)),true);
-            double p_t_timesGradofX = direction_k.T * gradF_of_x;
-            double p_t_timesGradofnextX = direction_k.T * gradF_of_nextX;
+            double f_of_nextX = FuncToMinimize(nextX);
+            DoubleVector gradF_of_nextX = FuncGrad(nextX);
+            double p_t_timesGradofX = direction_k * gradF_of_x;
+            double p_t_timesGradofnextX = direction_k * gradF_of_nextX;
 
-            if (f_of_nextX <= f_of_x + c1Wolfe * stepLength_k * p_t_timesGradofX)
-            {
-                if (-p_t_timesGradofnextX <= -c2Wolfe * p_t_timesGradofX)
-                {
-                    return new bool[] { true, true };
-                }
-                else
-                {
-                    return new bool[] { true, false };
-                }
-            }
+            //if (f_of_nextX <= f_of_x + c1Wolfe * stepLength_k * p_t_timesGradofX)
+            //{
+            //    if (-p_t_timesGradofnextX <= -c2Wolfe * p_t_timesGradofX)
+            //    {
+            //        return new bool[] { true, true };
+            //    }
+            //    else
+            //    {
+            //        return new bool[] { true, false };
+            //    }
+            //}
 
-            return new bool[] { false, false };
+            return new bool[] { f_of_nextX <= f_of_x + c1Wolfe * stepLength_k * p_t_timesGradofX, -p_t_timesGradofnextX <= -c2Wolfe * p_t_timesGradofX }; // { false, false };//
         }
 
-        private double backtrackingLineSearch(Matrix<double> X, Matrix<double> direction, Matrix<double> gradF_of_x, double alphaInit = 1)
+        private double backtrackingLineSearch(DoubleVector X,Func<DoubleVector,double> f, DoubleVector grad_F_atX, DoubleVector p, double alphaPrev, CancellationTokenSource ctSource)
+        {
+            double c = 0.5;
+            double tau = 0.5;
+            double m = grad_F_atX * p;
+
+            var f_of_x = f(X);
+
+            double alpha = alphaPrev;
+
+            double t = -c * m;
+
+            int j = 0; //iteration counter
+
+            if(f_of_x - f(X + alpha*p) >= alpha * t)
+            {
+                while(f_of_x - f(X + alpha * p) >= alpha * t && alpha <= initialStepSize && !ctSource.IsCancellationRequested)
+                {
+                    alpha = alpha / tau;
+                    j++;
+                    System.Diagnostics.Debug.WriteLine("Backtracking iteration count:" + j);
+                }
+            }
+            else
+            {
+                while (f_of_x - f(X + (alpha * p)) < alpha * t && !ctSource.IsCancellationRequested)
+                {
+                    alpha = alpha * tau;
+                    j++;
+                    System.Diagnostics.Debug.WriteLine("Backtracking iteration count:" + j);
+                }
+            }
+            return alpha;
+        }
+
+        private double backtrackingLineSearchOld(DoubleVector X, DoubleVector direction, DoubleVector gradF_of_x, double alphaInit = 1)
         {
             double tau = 0.5;
+            double c = 0.5;
+            double m = gradF_of_x * direction;
+            double t = -c * m;
             double alpha = alphaInit;
             int numRetries = 0;
             int totalTries = 0;
@@ -172,15 +410,27 @@ namespace MathDotNET.NumericalOptimizer
                 {
                     alpha *= tau;
                 }
-                else
-                {
-                    numRetries++;
-                    alpha = alphaInit * Math.Pow(10, numRetries);
-                }
+                //else
+                //{
+                //    numRetries++;
+                //    alpha = alphaInit * Math.Pow(3, numRetries);
+                //}
 
                 bothCondi = IsWolfeCondiMet(X, direction, alpha, gradF_of_x);
+                //if (numRetries > 5)
+                //{
+                //    initialStepSize = alpha;
+                //}
                 totalTries++;
             }
+            //while(FuncToMinimize(X) - FuncToMinimize(X + alpha * direction) > alpha * t)
+            //{
+            //    alpha *= 10;
+            //}
+            //while(FuncToMinimize(X) - FuncToMinimize(X + alpha*direction) < alpha * t)
+            //{
+            //    alpha *= tau;
+            //}
 
             return alpha;
         }
